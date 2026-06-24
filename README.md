@@ -1,43 +1,33 @@
-# Astro Starter Kit: Minimal
+# Boxing Game
 
-```sh
-npm create astro@latest -- --template minimal
+Astro site with GSAP animations and Playwright e2e tests.
+
+## Workflow (one direction — no back and forth)
+
+```
+Component  →  Console  →  Test  →  GitHub
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+| Step | What | Command |
+| :--- | :--- | :------ |
+| **1. Component** | Add `data-testid` (kebab-case, same as file name) | Edit e.g. `src/components/MyButton.astro` |
+| **2. Console** | Verify selector in DevTools on the **same** dev server | `npm run dev` → `http://127.0.0.1:4321/dev/test-lab` → F12 → `$$('[data-testid="my-button"]')` |
+| **3. Test** | Playwright reuses that dev server on **4321** (keep Terminal 1 running) | `npm run workflow` |
+| **4. GitHub** | Push — CI runs full production build + all tests | `npm run check` then `git push` |
 
-## 🚀 Project Structure
+Step 2 and 3 share `http://127.0.0.1:4321`. Keep `npm run dev` running, verify in Console, then run `npm run workflow` — forward only.
 
-Inside of your Astro project, you'll see the following folders and files:
+Deep dive (LCP, debugging, conventions): **[docs/astro-devtools-playwright-workflow.md](docs/astro-devtools-playwright-workflow.md)**
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+## Commands
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+| Command | Step | Action |
+| :------ | :--- | :----- |
+| `npm install` | setup | Install dependencies |
+| `npm run dev` | 2 | Dev server at `http://localhost:4321` |
+| `npm run workflow` | 3 | Example component test (after Console) |
+| `npm run check` | 4 | All Chromium E2E (CI parity, before push) |
+| `npm run build` | — | Production build to `./dist/` |
+| `npm run preview` | — | Preview the production build |
+| `npm run test:e2e` | — | All Playwright projects (chromium + mobile) |
+| `npm run test:e2e:debug` | — | Playwright Inspector |

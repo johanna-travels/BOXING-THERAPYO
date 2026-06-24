@@ -1,5 +1,5 @@
 {
-  "name": "astro-react-app",
+  "name": "floras-cookingmagic",
   "type": "module",
   "version": "0.0.1",
   "engines": {
@@ -7,16 +7,30 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "dev:clean": "lsof -ti:4321 -sTCP:LISTEN | xargs kill 2>/dev/null || true",
+    "dev:reset": "npm run dev:clean && npm run dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "workflow": "playwright test tests/example.spec.ts --project=chromium",
+    "workflow:debug": "playwright test tests/example.spec.ts --project=chromium --debug",
+    "check": "playwright test --project=chromium",
+    "test:e2e": "playwright test",
+    "test:e2e:debug": "playwright test --debug",
+    "test:example": "npm run workflow",
+    "test:contact-hero": "playwright test tests/contact-hero.spec.ts --project=chromium",
+    "test:overview": "playwright test tests/overview.spec.ts --project=chromium"
   },
   "dependencies": {
-    "@astrojs/react": "^5.0.7",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
+    "@fontsource/bebas-neue": "^5.2.7",
+    "@fontsource/oswald": "^5.2.8",
+    "@tailwindcss/vite": "^4.3.1",
     "astro": "^6.4.7",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7"
+    "gsap": "^3.15.0",
+    "tailwindcss": "^4.3.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.0",
+    "sass": "^1.101.0"
   }
 }

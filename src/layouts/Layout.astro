@@ -1,0 +1,36 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  preloadLcpImage?: {
+    href: string;
+    width?: number;
+    height?: number;
+  };
+}
+
+const { title = 'Boxing Game', preloadLcpImage } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    {
+      preloadLcpImage && (
+        <link
+          rel="preload"
+          as="image"
+          href={preloadLcpImage.href}
+          fetchpriority="high"
+        />
+      )
+    }
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

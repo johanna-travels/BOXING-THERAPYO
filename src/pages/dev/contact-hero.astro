@@ -1,0 +1,23 @@
+---
+import ContactHero from '@/components/ContactHero.astro';
+import Layout from '@/layouts/Layout.astro';
+import { heroLcp } from '@/data/hero';
+---
+
+<Layout
+  title="Contact Hero — LCP optimized"
+  preloadLcpImage={{
+    href: heroLcp.image.src,
+    width: heroLcp.image.width,
+    height: heroLcp.image.height,
+  }}
+>
+  <main data-testid="contact-hero-page" class="py-4">
+    <ContactHero />
+    <p class="mx-4 mt-4 text-sm text-gray max-w-prose">
+      Mobile hero reference: real <code>&lt;img&gt;</code> LCP element with
+      <code>fetchpriority="high"</code> and <code>loading="eager"</code> — not CSS
+      <code>background-image</code>.
+    </p>
+  </main>
+</Layout>

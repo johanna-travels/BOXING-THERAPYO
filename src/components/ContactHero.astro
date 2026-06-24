@@ -1,0 +1,83 @@
+---
+import SocialIconLink from '@/components/SocialIconLink.astro';
+import { heroLcp, socialLinks } from '@/data/hero';
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  imageSrc?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  imageAlt?: string;
+}
+
+const {
+  title = heroLcp.title,
+  subtitle = heroLcp.subtitle,
+  imageSrc = heroLcp.image.src,
+  imageWidth = heroLcp.image.width,
+  imageHeight = heroLcp.image.height,
+  imageAlt = heroLcp.image.alt,
+} = Astro.props;
+---
+
+<div
+  data-testid="contact-hero"
+  class="contact-hero relative mx-2 min-h-[300px] h-[50vw] max-h-[500px] rounded-[30px] overflow-hidden flex flex-col justify-end lg:hidden"
+>
+  <img
+    data-testid="contact-hero-lcp"
+    src={imageSrc}
+    alt={imageAlt}
+    width={imageWidth}
+    height={imageHeight}
+    class="absolute inset-0 h-full w-full object-cover object-center"
+    fetchpriority="high"
+    loading="eager"
+    decoding="async"
+  />
+
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent pointer-events-none z-0"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="relative z-10 w-full flex flex-col justify-end h-full">
+    <div
+      class="w-full max-w-[1300px] pl-4 pr-4 md:pl-10 md:pr-10 lg:pl-16 lg:pr-16 text-white pb-6 lg:pb-12"
+    >
+      <h1 class="hero-title text-white mb-2">{title}</h1>
+      <p class="prose-body text-white/80">{subtitle}</p>
+
+      <div class="flex items-center gap-5 mt-4">
+        {
+          socialLinks.map((link) => (
+            <SocialIconLink
+              href={link.href}
+              label={link.label}
+              icon={link.icon}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .hero-title {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 7vw, 3.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-transform: none;
+  }
+
+  .prose-body {
+    font-family: var(--font-body);
+    font-size: clamp(0.95rem, 2.5vw, 1.125rem);
+    letter-spacing: 0.02em;
+    text-transform: none;
+  }
+</style>

@@ -1,0 +1,43 @@
+---
+interface Props {
+  heading?: string;
+  action?: string;
+}
+
+const {
+  heading = 'Sign up to our newsletter',
+  action = '#',
+} = Astro.props;
+---
+
+<div class="footer-newsletter-wrapper py-[24px] bg-[#f4f4f4] text-[#282828]">
+  <div class="newsletter-container px-[15px] py-0">
+    <h2 class="newsletter__heading">{heading}</h2>
+
+    <form class="newsletter__form" action={action} method="post">
+      <input
+        type="text"
+        name="first-name"
+        class="newsletter__input"
+        placeholder="First name"
+        aria-label="First name"
+      />
+      <input
+        type="text"
+        name="last-name"
+        class="newsletter__input"
+        placeholder="Last name"
+        aria-label="Last name"
+      />
+      <input
+        type="email"
+        name="email"
+        class="newsletter__input"
+        placeholder="Email address"
+        aria-label="Email address"
+        required
+      />
+      <button type="submit" class="newsletter__submit">Sign up</button>
+    </form>
+  </div>
+</div>

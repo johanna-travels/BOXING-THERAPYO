@@ -1,0 +1,33 @@
+---
+type Item =
+  | { type: 'link'; href: string; label: string }
+  | { type: 'text'; text: string };
+
+interface Props {
+  items?: Item[];
+}
+
+const {
+  items = [
+    { type: 'link', href: 'tel:01172338700', label: '0117 233 8700' },
+    { type: 'text', text: 'Call for all enquiries (Mon to Fri, 10am to 5pm)' },
+    { type: 'link', href: '#', label: 'Donate' },
+  ],
+} = Astro.props;
+---
+
+<div class="footer-ctas-wrapper bg-[#282828] py-[60px]">
+  <div class="max-w-[840px] mx-auto flex flex-col items-center text-center gap-[15px]">
+    {
+      items.map((item) =>
+        item.type === 'link' ? (
+          <a href={item.href} class="footer-ctas__link text-[46px] font-semibold text-white">
+            {item.label}
+          </a>
+        ) : (
+          <p class="footer-ctas__tel-text text-[22px] text-[#727272]">{item.text}</p>
+        ),
+      )
+    }
+  </div>
+</div>

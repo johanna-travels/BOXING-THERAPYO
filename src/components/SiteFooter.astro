@@ -1,0 +1,34 @@
+---
+import FooterContactsWrapper from '@/components/sections/footer-contacts-wrapper.astro';
+import FooterLegalSocialWrapper from '@/components/sections/footer-legal-social-wrapper.astro';
+import NewsletterWrapper from '@/components/sections/newsletter-wrapper.astro';
+import WraperContact from '@/components/sections/wraper-contact.astro';
+import { site } from '@/data/site';
+---
+
+<footer data-footer-bob data-site-footer class="page-footer w-full">
+  <p class="site-footer__label">{site.footer}</p>
+  <NewsletterWrapper />
+  <WraperContact />
+  <FooterContactsWrapper />
+  <FooterLegalSocialWrapper />
+</footer>
+
+<style lang="scss">
+  .site-footer__label {
+    margin: 0;
+    padding: 2rem 1rem 0;
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-gray);
+  }
+</style>
+
+<script>
+  import { initFooterBob } from '@/scripts/gsap/footer-bob';
+
+  initFooterBob();
+</script>

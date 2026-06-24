@@ -1,0 +1,78 @@
+ASTRO WORKFLOW — COMMANDS (Component → Console → Test → GitHub)
+================================================================
+
+IMPORTANT — ONE PORT ONLY (4321)
+  Console (browser) and Playwright MUST use the same server.
+  Always open:  http://127.0.0.1:4321/dev/test-lab
+  NOT localhost:4322 (if you see 4322, something is wrong — see below).
+
+
+ONE-TIME SETUP (new machine / clone)
+------------------------------------------------------------
+  npm install
+  npx playwright install chromium
+
+
+IF PORT 4321 IS BUSY (dev fails or you see 4322)
+------------------------------------------------------------
+  npm run dev:reset
+
+  That kills only the process LISTENING on 4321 (not Chrome tabs).
+  Then starts dev again on 4321.
+
+  Manual:
+  npm run dev:clean
+  npm run dev
+
+
+EVERY NEW COMPONENT (repeat)
+------------------------------------------------------------
+
+STEP 1 — COMPONENT
+  Edit e.g. src/components/MyButton.astro
+  Add: data-testid="my-button"
+
+  If not on a real page yet, add to:
+  src/pages/dev/test-lab.astro
+
+
+STEP 2 — CONSOLE (Terminal 1 — leave it running)
+------------------------------------------------------------
+  npm run dev
+
+  Browser (same port Playwright uses):
+  http://127.0.0.1:4321/dev/test-lab
+
+  F12 → Console:
+  $$('[data-testid="my-button"]')
+
+  Must return 1 element.
+
+
+STEP 3 — TEST (Terminal 2 — dev still running in Terminal 1)
+------------------------------------------------------------
+  npm run workflow
+
+  Playwright reuses your dev server on 4321 (no second server).
+
+  Debug only the example test (not all 18 tests):
+  npm run workflow:debug
+
+
+STEP 4 — GITHUB (before push)
+------------------------------------------------------------
+  npm run check
+
+  git add .
+  git commit -m "your message"
+  git push
+
+
+QUICK REFERENCE
+------------------------------------------------------------
+  npm run dev            step 2 — start dev (4321)
+  npm run dev:reset      fix stuck port + start dev
+  npm run workflow       step 3 — test your component
+  npm run workflow:debug step 3 — Inspector, example test only
+  npm run check          step 4 — all tests before push
+  npm run test:e2e       all tests, chromium + mobile
