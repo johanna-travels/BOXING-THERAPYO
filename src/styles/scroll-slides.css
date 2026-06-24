@@ -1,0 +1,196 @@
+/*
+  snap-slide
+  ├── slide-media   bg (inset, reduced opacity) — sibling, NOT in mask
+  └── snap-slide__mask  border + content
+  Gap between bg edge and mask = --slide-bg-mask-gap (black shows through)
+*/
+
+:root {
+  --slide-height: 100vh;
+  --slide-height: 100dvh;
+  --slide-portrait-ratio: 3 / 4;
+  --slide-portrait-border: 14px;
+  --slide-portrait-gutter: 16px;
+  --slide-bg-gap: 20px;
+  --slide-bg-mask-gap: 16px;
+  --slide-bg-opacity: 0.45;
+}
+
+.snap-slide {
+  position: relative;
+  height: var(--slide-height);
+  min-height: var(--slide-height);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  overflow: hidden;
+  background-color: var(--color-black);
+  transition: none;
+}
+
+/* bg layer — behind mask, inset from slide edge */
+.slide-media {
+  display: none;
+  position: absolute;
+  z-index: 0;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.snap-slide--has-bg .slide-media {
+  display: none;
+  width: 0;
+  height: 0;
+  overflow: visible;
+}
+
+.snap-slide--has-bg .slide-media .bg-layer__img {
+  position: fixed;
+  top: var(--slide-bg-gap);
+  right: var(--slide-bg-gap);
+  bottom: var(--slide-bg-gap);
+  left: var(--slide-bg-gap);
+  z-index: 0;
+  width: auto;
+  height: auto;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: var(--color-black);
+  opacity: 0;
+  transition: none;
+  pointer-events: none;
+}
+
+.snap-slide--has-bg.is-active .slide-media .bg-layer__img {
+  opacity: var(--slide-bg-opacity);
+}
+
+.snap-slide__mask {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  background: transparent;
+  pointer-events: none;
+}
+
+.snap-slide__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding:
+    calc(1.25rem + env(safe-area-inset-top, 0))
+    calc(1.25rem + env(safe-area-inset-right, 0))
+    calc(1.25rem + env(safe-area-inset-bottom, 0))
+    calc(1.25rem + env(safe-area-inset-left, 0));
+  background: transparent;
+  pointer-events: none;
+}
+
+.snap-slide__content > :global(*) {
+  pointer-events: auto;
+}
+
+.scroll-page {
+  position: relative;
+  z-index: 2;
+  overflow-x: hidden;
+  transition: none;
+}
+
+.scroll-page__footer {
+  scroll-snap-align: start;
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --slide-bg-gap: 24px;
+    --slide-bg-mask-gap: 20px;
+  }
+
+  .snap-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding:
+      max(var(--slide-portrait-gutter), env(safe-area-inset-top, 0))
+      max(var(--slide-portrait-gutter), env(safe-area-inset-right, 0))
+      max(var(--slide-portrait-gutter), env(safe-area-inset-bottom, 0))
+      max(var(--slide-portrait-gutter), env(safe-area-inset-left, 0));
+  }
+
+  .snap-slide--has-bg .slide-media {
+    display: block;
+  }
+
+  .scroll-page,
+  .snap-slide__mask,
+  .snap-slide__content {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* mask sits inside bg area — gap between fixed bg edge and mask border */
+  .snap-slide--has-bg .snap-slide__mask {
+    position: relative;
+    inset: auto;
+    width: min(
+      calc(
+        100vw
+        - (var(--slide-portrait-gutter) * 2)
+        - (var(--slide-bg-gap) * 2)
+        - (var(--slide-bg-mask-gap) * 2)
+        - env(safe-area-inset-left, 0)
+        - env(safe-area-inset-right, 0)
+      ),
+      calc(
+        (100dvh - (var(--slide-portrait-gutter) * 2) - (var(--slide-bg-gap) * 2) - (var(--slide-bg-mask-gap) * 2))
+        * 0.75
+      )
+    );
+    height: auto;
+    aspect-ratio: var(--slide-portrait-ratio);
+    max-height: calc(
+      100dvh
+      - (var(--slide-portrait-gutter) * 2)
+      - (var(--slide-bg-gap) * 2)
+      - (var(--slide-bg-mask-gap) * 2)
+    );
+    flex-shrink: 0;
+    border: var(--slide-portrait-border) solid var(--color-white);
+    background: rgb(0 0 0 / 0.25);
+    overflow: hidden;
+  }
+
+  /* slides without bg — portrait mask only, full opacity on black */
+  .snap-slide:not(.snap-slide--has-bg) .snap-slide__mask {
+    position: relative;
+    inset: auto;
+    width: min(
+      calc(100vw - (var(--slide-portrait-gutter) * 2) - env(safe-area-inset-left, 0) - env(safe-area-inset-right, 0)),
+      calc((100dvh - (var(--slide-portrait-gutter) * 2)) * 0.75)
+    );
+    height: auto;
+    aspect-ratio: var(--slide-portrait-ratio);
+    max-height: calc(100dvh - (var(--slide-portrait-gutter) * 2));
+    flex-shrink: 0;
+    border: var(--slide-portrait-border) solid var(--color-white);
+    overflow: hidden;
+  }
+
+  .snap-slide__content {
+    padding: 1rem;
+  }
+}

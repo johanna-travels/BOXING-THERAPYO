@@ -8,8 +8,10 @@ test('MyButton test-id workflow works instantly', async ({ page }) => {
   await expect(button).toBeVisible();
   await expect(button).toHaveText('Υποβολή');
 
-  // Uncomment to open Playwright Inspector with live DevTools:
-  // await page.pause();
-
   await button.click();
+
+  // Headed/watch modes: keep browser open until you close Inspector.
+  if (process.env.PW_WATCH) {
+    await page.pause();
+  }
 });

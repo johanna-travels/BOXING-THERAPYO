@@ -1,0 +1,72 @@
+---
+import SlideMedia from '@/components/SlideMedia.astro';
+
+interface Props {
+  images?: string[];
+  fixed?: boolean;
+}
+
+const {
+  images = Array.from(
+    { length: 6 },
+    (_, index) => `https://picsum.photos/seed/lapa-ninza-${index}/1600/1200`,
+  ),
+  fixed = true,
+} = Astro.props;
+---
+
+<div
+  class:list={['bg-layer', fixed ? 'bg-layer--fixed' : 'bg-layer--contained']}
+  data-testid="bg-layer"
+  aria-hidden="true"
+>
+  {
+    images.map((src, index) => (
+      <div class="bg-layer__slide">
+        <SlideMedia
+          src={src}
+          alt={`Background ${index + 1}`}
+          eager={index === 0}
+        />
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .bg-layer {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .bg-layer--fixed {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .bg-layer--contained {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .bg-layer__slide {
+    position: relative;
+    flex: 1 0 50%;
+    min-height: 0;
+    overflow: hidden;
+    background: var(--color-black);
+  }
+
+  .bg-layer--contained .bg-layer__slide {
+    min-height: 120px;
+  }
+
+  .bg-layer__slide :global(.slide-media) {
+    position: absolute;
+    inset: 0;
+  }
+</style>

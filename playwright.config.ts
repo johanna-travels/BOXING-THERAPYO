@@ -12,8 +12,12 @@ export default defineConfig({
   outputDir: 'test-results',
   use: {
     baseURL,
-    trace: 'on-first-retry',
+    // Local: full trace so UI Mode shows steps (not blank panel).
+    trace: isCI ? 'on-first-retry' : 'on',
     screenshot: 'only-on-failure',
+    launchOptions: {
+      slowMo: process.env.PW_WATCH ? 400 : 0,
+    },
   },
   projects: [
     {

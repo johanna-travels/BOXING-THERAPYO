@@ -1,0 +1,273 @@
+---
+interface Props {
+  heading?: string;
+  action?: string;
+}
+
+const { heading = 'Sign up', action = '#' } = Astro.props;
+---
+
+<section
+  class="contact-form-wrapper"
+  data-testid="contact-form"
+  aria-labelledby="contact-form-heading"
+>
+  <h2 id="contact-form-heading" class="contact-form__heading">{heading}</h2>
+
+  <form
+    class="contact-form__form"
+    data-testid="contact-form-form"
+    action={action}
+    method="post"
+    novalidate
+  >
+    <div class="contact-form__field">
+      <input
+        type="text"
+        id="cf-firstname"
+        name="first-name"
+        class="contact-form__input"
+        placeholder="First name *"
+        aria-label="First name (required)"
+        aria-required="true"
+        aria-invalid="false"
+        aria-describedby="cf-firstname-error"
+        autocomplete="given-name"
+        data-testid="contact-form-firstname"
+        required
+      />
+      <p
+        class="contact-form__error"
+        id="cf-firstname-error"
+        data-testid="contact-form-firstname-error"
+        role="alert"
+        hidden
+      >
+        Please enter your first name.
+      </p>
+    </div>
+
+    <div class="contact-form__field">
+      <input
+        type="text"
+        id="cf-lastname"
+        name="last-name"
+        class="contact-form__input"
+        placeholder="Last name *"
+        aria-label="Last name (required)"
+        aria-required="true"
+        aria-invalid="false"
+        aria-describedby="cf-lastname-error"
+        autocomplete="family-name"
+        data-testid="contact-form-lastname"
+        required
+      />
+      <p
+        class="contact-form__error"
+        id="cf-lastname-error"
+        data-testid="contact-form-lastname-error"
+        role="alert"
+        hidden
+      >
+        Please enter your last name.
+      </p>
+    </div>
+
+    <div class="contact-form__field">
+      <input
+        type="email"
+        id="cf-email"
+        name="email"
+        class="contact-form__input"
+        placeholder="Email address *"
+        aria-label="Email address (required)"
+        aria-required="true"
+        aria-invalid="false"
+        aria-describedby="cf-email-error cf-email-valid"
+        autocomplete="email"
+        data-testid="contact-form-email"
+        required
+      />
+      <p
+        class="contact-form__error"
+        id="cf-email-error"
+        data-testid="contact-form-email-error"
+        role="alert"
+        hidden
+      >
+        Please enter a valid email address.
+      </p>
+      <p
+        class="contact-form__valid"
+        id="cf-email-valid"
+        data-testid="contact-form-email-valid"
+        role="status"
+        hidden
+      >
+        Looks good!
+      </p>
+    </div>
+
+    <button
+      type="submit"
+      class="contact-form__submit"
+      data-testid="contact-form-submit"
+    >
+      Sign up
+    </button>
+
+    <p
+      class="contact-form__status"
+      data-testid="contact-form-status"
+      role="status"
+      aria-live="polite"
+      hidden
+    >
+      Thanks for signing up!
+    </p>
+  </form>
+</section>
+
+<script>
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function show(el: HTMLElement | null, visible: boolean) {
+    if (el) el.hidden = !visible;
+  }
+
+  function setInvalid(input: HTMLInputElement, invalid: boolean) {
+    input.setAttribute('aria-invalid', String(invalid));
+  }
+
+  document.querySelectorAll<HTMLFormElement>('[data-testid="contact-form-form"]').forEach((form) => {
+    const firstName = form.querySelector<HTMLInputElement>('#cf-firstname')!;
+    const lastName = form.querySelector<HTMLInputElement>('#cf-lastname')!;
+    const email = form.querySelector<HTMLInputElement>('#cf-email')!;
+
+    const firstNameError = form.querySelector<HTMLElement>('#cf-firstname-error');
+    const lastNameError = form.querySelector<HTMLElement>('#cf-lastname-error');
+    const emailError = form.querySelector<HTMLElement>('#cf-email-error');
+    const emailValid = form.querySelector<HTMLElement>('#cf-email-valid');
+    const status = form.querySelector<HTMLElement>('[data-testid="contact-form-status"]');
+
+    function validateRequired(input: HTMLInputElement, error: HTMLElement | null) {
+      const ok = input.value.trim().length > 0;
+      setInvalid(input, !ok);
+      show(error, !ok);
+      return ok;
+    }
+
+    function validateEmail() {
+      const value = email.value.trim();
+      const ok = EMAIL_RE.test(value);
+      setInvalid(email, !ok);
+      show(emailError, !ok);
+      show(emailValid, ok); // "valid" message is email-only
+      return ok;
+    }
+
+    // Email-only live "valid" feedback
+    email.addEventListener('input', () => {
+      const ok = EMAIL_RE.test(email.value.trim());
+      setInvalid(email, !ok && email.value.trim().length > 0);
+      show(emailError, false);
+      show(emailValid, ok);
+    });
+
+    firstName.addEventListener('blur', () => validateRequired(firstName, firstNameError));
+    lastName.addEventListener('blur', () => validateRequired(lastName, lastNameError));
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const okFirst = validateRequired(firstName, firstNameError);
+      const okLast = validateRequired(lastName, lastNameError);
+      const okEmail = validateEmail();
+
+      if (okFirst && okLast && okEmail) {
+        show(status, true);
+      } else {
+        show(status, false);
+        const firstInvalid = [firstName, lastName, email].find(
+          (i) => i.getAttribute('aria-invalid') === 'true',
+        );
+        firstInvalid?.focus();
+      }
+    });
+  });
+</script>
+
+<style>
+  .contact-form-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    max-width: 500px;
+    color: rgb(40, 40, 40);
+  }
+
+  .contact-form__heading {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+
+  .contact-form__form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .contact-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .contact-form__input {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgb(204, 204, 204);
+    border-radius: 4px;
+    background-color: rgb(255, 255, 255);
+    font-size: 1rem;
+    height: auto;
+    box-sizing: border-box;
+  }
+
+  .contact-form__input[aria-invalid='true'] {
+    border-color: rgb(192, 57, 43);
+  }
+
+  .contact-form__submit {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: rgb(40, 40, 40);
+    color: rgb(255, 255, 255);
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    height: auto;
+    font-size: 1rem;
+  }
+
+  .contact-form__error {
+    margin: 0;
+    color: rgb(192, 57, 43);
+    font-size: 0.85rem;
+  }
+
+  .contact-form__valid {
+    margin: 0;
+    color: rgb(30, 126, 52);
+    font-size: 0.85rem;
+  }
+
+  .contact-form__status {
+    margin: 0;
+    color: rgb(30, 126, 52);
+    font-weight: bold;
+  }
+</style>

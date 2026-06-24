@@ -1,14 +1,12 @@
 ---
 import FooterContactsWrapper from '@/components/sections/footer-contacts-wrapper.astro';
 import FooterLegalSocialWrapper from '@/components/sections/footer-legal-social-wrapper.astro';
-import NewsletterWrapper from '@/components/sections/newsletter-wrapper.astro';
 import WraperContact from '@/components/sections/wraper-contact.astro';
 import { site } from '@/data/site';
 ---
 
 <footer data-footer-bob data-site-footer class="page-footer w-full">
   <p class="site-footer__label">{site.footer}</p>
-  <NewsletterWrapper />
   <WraperContact />
   <FooterContactsWrapper />
   <FooterLegalSocialWrapper />

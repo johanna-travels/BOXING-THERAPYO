@@ -2,10 +2,15 @@
   "extends": "astro/tsconfigs/strict",
   "include": [
     ".astro/types.d.ts",
-    "**/*"
+    "src/**/*",
+    "tests/**/*",
+    "playwright.config.ts"
   ],
   "exclude": [
-    "dist"
+    "dist",
+    "node_modules",
+    "test-results",
+    "playwright-report"
   ],
   "compilerOptions": {
     "baseUrl": ".",

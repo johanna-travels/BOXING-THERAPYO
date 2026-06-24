@@ -16,7 +16,10 @@ const {
 } = Astro.props;
 ---
 
-<div class="footer-ctas-wrapper bg-[#282828] py-[60px]">
+<div
+  class="footer-ctas-wrapper bg-black py-[60px]"
+  data-testid="footer-contact-section"
+>
   <div class="max-w-[840px] mx-auto flex flex-col items-center text-center gap-[15px]">
     {
       items.map((item) =>

@@ -1,0 +1,52 @@
+---
+interface Props {
+  src: string;
+  alt?: string;
+  eager?: boolean;
+  width?: number;
+  height?: number;
+}
+
+const {
+  src,
+  alt = '',
+  eager = false,
+  width = 1600,
+  height = 1200,
+} = Astro.props;
+---
+
+<div class="slide-media" data-testid="bg-layer-img-parent">
+  {
+    eager && (
+      <img
+        class="slide-media__lcp"
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+        aria-hidden="true"
+      />
+    )
+  }
+  <div
+    class="bg-layer__img"
+    data-testid="bg-layer-img"
+    role="img"
+    aria-label={alt}
+    style={`background-image: url(${src})`}
+  />
+</div>
+
+<style>
+  .slide-media__lcp {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+</style>

@@ -1,0 +1,33 @@
+---
+import SlideMedia from '@/components/SlideMedia.astro';
+
+interface Props {
+  imageSrc?: string;
+  imageAlt?: string;
+  priority?: boolean;
+  testId?: string;
+  class?: string;
+}
+
+const {
+  imageSrc,
+  imageAlt = '',
+  priority = false,
+  testId,
+  class: className,
+} = Astro.props;
+
+const hasBg = Boolean(imageSrc);
+---
+
+<section
+  class:list={['snap-slide', hasBg && 'snap-slide--has-bg', className]}
+  data-testid={testId ?? 'snap-slide'}
+>
+  {hasBg && <SlideMedia src={imageSrc!} alt={imageAlt} eager={priority} />}
+  <div class="snap-slide__mask" data-testid="mask-section">
+    <div class="snap-slide__content" data-testid="snap-slide-content">
+      <slot />
+    </div>
+  </div>
+</section>
