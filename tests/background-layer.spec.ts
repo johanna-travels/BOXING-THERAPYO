@@ -12,10 +12,7 @@ test.describe('Background Layer', () => {
     await expect(layer).toBeVisible();
     await expect(images).toHaveCount(6);
 
-    // First image carries a background-image url
-    const firstBg = await images
-      .first()
-      .evaluate((el) => getComputedStyle(el).backgroundImage);
-    expect(firstBg).toContain('url(');
+    // First image carries a real src
+    await expect(images.first()).toHaveAttribute('src', /picsum\.photos/);
   });
 });

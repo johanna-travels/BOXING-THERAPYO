@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "./fonts.css";
-@import "./scroll-slides.css";
 
 @theme inline {
   --font-heading: 'Oswald', system-ui, sans-serif;
@@ -28,6 +27,14 @@
   --spacing-breathe-xl: clamp(4.5rem, 10vw, 8rem);
 }
 
+:root {
+  /* Stacking order ("layer cake") — avoids magic z-index numbers */
+  --z-bg-base: -2;
+  --z-bg-video: -1;
+  --z-content: 1;
+  --z-overlay: 10;
+}
+
 @layer base {
   * {
     box-sizing: border-box;
@@ -36,9 +43,10 @@
   html {
     height: 100%;
     scroll-snap-type: y mandatory;
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
     overflow-y: scroll;
     overflow-x: hidden;
+    overscroll-behavior-y: none;
     -webkit-overflow-scrolling: touch;
     scroll-padding-top: env(safe-area-inset-top, 0);
     scroll-padding-bottom: env(safe-area-inset-bottom, 0);
@@ -54,6 +62,10 @@
     font-family: var(--font-body);
     font-weight: 400;
     letter-spacing: 0.04em;
+  }
+
+  body {
+    isolation: isolate; /* Ensures children don't conflict with elements outside the body (like browser UI) */
   }
 
   h1,
@@ -247,4 +259,34 @@
     border-color: var(--color-info);
     color: var(--color-info);
   }
+}
+
+/* Mobile: natural vertical scrolling + white theme for the image feed */
+@media (max-width: 767px) {
+  html {
+    height: auto;
+    scroll-snap-type: none;
+  }
+
+  html,
+  body {
+    height: auto;
+    min-height: 100dvh;
+    overflow-y: auto;
+    background: var(--color-white);
+    color: var(--color-black);
+  }
+}
+
+/* Wrapper for third-party background layers (canvas, WebGL, video, etc.) */
+.untouchable-background-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--z-bg-video);
+}
+
+/* Ensure the library's internal elements also don't block clicks */
+.untouchable-background-container * {
+  pointer-events: none !important;
 }

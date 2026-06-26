@@ -1,8 +1,7 @@
 ---
 import BackgroundLayer from '@/components/BackgroundLayer.astro';
 import ContactFormWrapper from '@/components/sections/contact-form-wrapper.astro';
-import FooterCtasWrapper from '@/components/sections/footer-ctas-wrapper.astro';
-import MyButton from '@/components/MyButton.astro';
+
 import Layout from '@/layouts/Layout.astro';
 ---
 
@@ -17,13 +16,7 @@ import Layout from '@/layouts/Layout.astro';
     </p>
 
     <section data-testid="hero-section" class="grid gap-4">
-      <h2 class="text-lg text-gray">MyButton</h2>
-      <MyButton />
-    </section>
-
-    <section data-testid="footer-ctas-section" class="w-full max-w-[840px]">
-      <h2 class="mb-4 text-lg text-gray">Footer CTAs</h2>
-      <FooterCtasWrapper />
+      <h2 class="text-lg text-gray">MyButton</h2>      
     </section>
 
     <section data-testid="contact-form-section" class="w-full max-w-[840px] bg-white p-6 text-left rounded-xl">
@@ -34,7 +27,7 @@ import Layout from '@/layouts/Layout.astro';
     <section data-testid="bg-layer-section" class="w-full max-w-[840px]">
       <h2 class="mb-4 text-lg text-gray">Background Layer (contained preview)</h2>
       <div class="relative h-[420px] w-full overflow-hidden rounded-xl">
-        <BackgroundLayer fixed={false} />
+        <BackgroundLayer />
       </div>
     </section>
   </main>

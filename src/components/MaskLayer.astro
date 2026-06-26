@@ -1,0 +1,93 @@
+---
+/**
+ * Layer 2 — the mask.
+ * Sits above the BackgroundLayer (layer 1) and frames the viewport with a
+ * border "window". The edge gap lets the background show through around the
+ * frame. The frame itself is non-interactive; slotted content is interactive.
+ */
+interface Props {
+  border?: string;
+  gap?: string;
+  color?: string;
+  fixed?: boolean;
+  frames?: number;
+  frameGap?: string;
+}
+
+const {
+  border = '14px',
+  gap = '20px',
+  color = 'var(--color-white)',
+  fixed = false,
+  frames = 3,
+  frameGap = '12px',
+} = Astro.props;
+---
+
+<div
+  class:list={['mask-layer', fixed ? 'mask-layer--fixed' : 'mask-layer--contained']}
+  data-testid="mask-layer"
+  style={`--mask-border: ${border}; --mask-gap: ${gap}; --mask-color: ${color}; --mask-frame-gap: ${frameGap};`}
+>
+  {
+    Array.from({ length: frames }).map((_, index) => (
+      <div class="mask-layer__frame" aria-hidden="true" style={`--i: ${index};`} />
+    ))
+  }
+  <div class="mask-layer__content">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .mask-layer {
+    pointer-events: none;
+    z-index: var(--z-content);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--mask-gap);
+    padding: var(--mask-gap);
+    box-sizing: border-box;
+  }
+
+  .mask-layer--fixed {
+    position: fixed;
+    inset: 0;
+  }
+
+  .mask-layer--contained {
+    position: relative;
+    width: 100%;
+    min-height: 100dvh;
+  }
+
+  /* Vertical stack of border windows */
+  .mask-layer__frame {
+    position: relative;
+    flex: 0 0 auto;
+    width: 360px;
+    height: 420px;
+    box-sizing: border-box;
+    border: var(--mask-border) solid var(--mask-color);
+    pointer-events: none;
+  }
+
+  /* Centered content area, inset so it lives inside the border window */
+  .mask-layer__content {
+    position: absolute;
+    inset: calc(var(--mask-gap) + var(--mask-border));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1.25rem;
+    pointer-events: none;
+  }
+
+  /* Re-enable interaction for anything the user actually slots in */
+  .mask-layer__content > :global(*) {
+    pointer-events: auto;
+  }
+</style>

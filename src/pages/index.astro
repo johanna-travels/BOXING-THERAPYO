@@ -1,83 +1,24 @@
 ---
-import BreathingSection from '@/components/BreathingSection.astro';
-import PageMask from '@/components/PageMask.astro';
-import ScrollSlide from '@/components/ScrollSlide.astro';
-import SiteFooter from '@/components/SiteFooter.astro';
-import NewsletterWrapper from '@/components/sections/newsletter-wrapper.astro';
-import Layout from '@/layouts/Layout.astro';
+import BackgroundLayer from '@/components/BackgroundLayer.astro';
+import MaskLayer from '@/components/MaskLayer.astro';
 import { site } from '@/data/site';
 
-const slideImages = Array.from(
-  { length: 6 },
-  (_, index) => `https://picsum.photos/seed/lapa-ninza-${index}/1600/1200`,
-);
+import Layout from '@/layouts/Layout.astro';
 
-const slideContent = [
-  { heading: site.name, text: site.tagline, cta: site.cta },
-  { heading: 'Round 1', text: 'Find your stance.' },
-  { heading: 'Round 2', text: 'Build your rhythm.' },
-  { heading: 'Round 3', text: 'Stay in control.' },
-  { heading: 'Round 4', text: 'Push through.' },
-  { heading: 'Round 5', text: 'Finish strong.' },
-] as const;
 ---
 
 <Layout title={site.name}>
-  <PageMask>
-    <div class="scroll-page" data-testid="scroll-page">
-      {
-        slideContent.map((slide, index) => (
-          <ScrollSlide
-            testId={index === 0 ? 'bg-layer' : undefined}
-            imageSrc={slideImages[index]}
-            imageAlt={`Slide ${index + 1}`}
-            priority={index === 0}
-          >
-            <BreathingSection
-              as="div"
-              class:list={[
-                'slide-content grid place-content-center gap-4 text-center drop-shadow-lg',
-                index === 0 && 'hero-slide',
-              ]}
-            >
-              {index === 0 ? (
-                <>
-                  <h1>{slide.heading}</h1>
-                  <p class="text-lg">{slide.text}</p>
-                  <a href="#" class="btn-primary px-6 py-3">{slide.cta}</a>
-                </>
-              ) : (
-                <>
-                  <h2 class="font-heading text-4xl md:text-5xl">{slide.heading}</h2>
-                  <p class="text-lg">{slide.text}</p>
-                </>
-              )}
-            </BreathingSection>
-          </ScrollSlide>
-        ))
-      }
-
-      <ScrollSlide testId="newsletter-slide">
-        <NewsletterWrapper />
-      </ScrollSlide>
-    </div>
-
-    <SiteFooter slot="footer" />
-  </PageMask>
+  <div class="bg-backdrop">
+    <BackgroundLayer />
+  </div>
+  <MaskLayer />
 </Layout>
 
-<script>
-  import { initFixedSlideBackgrounds } from '@/scripts/fixed-slide-bg';
-
-  initFixedSlideBackgrounds();
-</script>
-
 <style>
-  .hero-slide :global(h1) {
-    font-size: clamp(2rem, 10vw, 5rem);
-  }
-
-  .hero-slide :global(p) {
-    font-size: clamp(1rem, 4vw, 1.125rem);
+  /* Pin the background to the viewport so the page scrolls over it */
+  .bg-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
   }
 </style>
