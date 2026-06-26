@@ -1,0 +1,26 @@
+---
+interface Props {
+  color?: string;
+}
+
+const { color = 'rgb(235, 75, 61)' } = Astro.props;
+---
+
+<div class="transition" aria-hidden="true">
+  <div class="transition__middle" style={`background-color: ${color};`}></div>
+</div>
+
+<style>
+  .transition {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-transition);
+    pointer-events: none;
+  }
+
+  .transition__middle {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+  }
+</style>

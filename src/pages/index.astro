@@ -1,24 +1,17 @@
 ---
-import BackgroundLayer from '@/components/BackgroundLayer.astro';
-import MaskLayer from '@/components/MaskLayer.astro';
-import { site } from '@/data/site';
-
+import HeroVideo from '@/components/HeroVideo.astro';
+import LandingSection from '@/components/LandingSection.astro';
 import Layout from '@/layouts/Layout.astro';
-
+import { sections } from '@/data/nav';
 ---
 
-<Layout title={site.name}>
-  <div class="bg-backdrop">
-    <BackgroundLayer />
-  </div>
-  <MaskLayer />
+<Layout title="B.TH">
+  <main class="landing" data-testid="landing-main">
+    <HeroVideo />
+    {
+      sections
+        .filter((section) => section.id !== 'hero')
+        .map((section) => <LandingSection id={section.id} title={section.title} />)
+    }
+  </main>
 </Layout>
-
-<style>
-  /* Pin the background to the viewport so the page scrolls over it */
-  .bg-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-  }
-</style>

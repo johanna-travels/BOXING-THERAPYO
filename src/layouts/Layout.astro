@@ -1,36 +1,32 @@
 ---
 import '../styles/global.css';
+import NavMenu from '@/components/NavMenu.astro';
+import SiteHeader from '@/components/SiteHeader.astro';
 
 interface Props {
   title?: string;
-  preloadLcpImage?: {
-    href: string;
-    width?: number;
-    height?: number;
-  };
 }
 
-const { title = 'Boxing Game', preloadLcpImage } = Astro.props;
+const { title = 'Site' } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
-    {
-      preloadLcpImage && (
-        <link
-          rel="preload"
-          as="image"
-          href={preloadLcpImage.href}
-          fetchpriority="high"
-        />
-      )
-    }
   </head>
   <body>
+    <SiteHeader />
+    <NavMenu />
     <slot />
+    <script>
+      import { initHeaderTransition } from '@/scripts/gsap/header-transition';
+      import { initNavMenu } from '@/scripts/gsap/nav-menu';
+
+      initHeaderTransition();
+      initNavMenu();
+    </script>
   </body>
 </html>

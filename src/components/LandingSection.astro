@@ -1,0 +1,13 @@
+---
+interface Props {
+  id: string;
+  title: string;
+}
+
+const { id, title } = Astro.props;
+---
+
+<section id={id} class="landing__section" data-testid={`landing-section-${id}`}>
+  <h2>{title}</h2>
+  <slot />
+</section>

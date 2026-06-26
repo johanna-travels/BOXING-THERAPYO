@@ -1,0 +1,91 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+const toggleId = 'nav-toggle-input';
+---
+
+<div class:list={['nav-toggle', className]}>
+  <input
+    type="checkbox"
+    id={toggleId}
+    class="toggle-input"
+    data-nav-toggle
+    data-testid="nav-toggle"
+    role="switch"
+    aria-controls="site-nav-menu"
+    aria-checked="false"
+    aria-label="Open menu"
+  />
+  <label for={toggleId} class="toggle-label nav_icon" data-testid="nav-toggle-label">
+    <span class="toggle-button"></span>
+  </label>
+</div>
+
+<style>
+  .nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--touch-target);
+    min-height: var(--touch-target);
+  }
+
+  .toggle-input {
+    display: none;
+  }
+
+  .toggle-label {
+    width: 52px;
+    height: 28px;
+    background: transparent;
+    border: 1.5px solid var(--color-white);
+    border-radius: 50px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+  }
+
+  .toggle-button {
+    width: 20px;
+    height: 20px;
+    background: var(--color-white);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 3px;
+    translate: 0 -50%;
+    transition:
+      left 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+      background-color 0.25s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .toggle-button::before {
+    content: '✕';
+    font-size: 11px;
+    line-height: 1;
+    color: var(--color-black);
+    font-weight: 700;
+    transition: color 0.25s ease;
+  }
+
+  .toggle-input:checked + .toggle-label {
+    background: var(--color-white);
+    border-color: var(--color-white);
+  }
+
+  .toggle-input:checked + .toggle-label .toggle-button {
+    left: calc(100% - 23px);
+    background: var(--color-black);
+  }
+
+  .toggle-input:checked + .toggle-label .toggle-button::before {
+    content: '✓';
+    color: var(--color-white);
+  }
+</style>

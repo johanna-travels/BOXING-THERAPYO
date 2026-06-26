@@ -1,0 +1,144 @@
+---
+import { ctaNav, primaryNav, socialNav } from '@/data/nav';
+---
+
+<div class="nav-menu" id="site-nav-menu" data-nav-menu data-testid="nav-menu" aria-hidden="true">
+  <div class="nav-menu__panel" data-nav-panel data-testid="nav-menu-panel">
+    <nav class="nav-menu__primary" aria-label="Primary">
+      <ul class="menu nav">
+        {
+          primaryNav.map((item) => (
+            <li class="menu__item" data-nav-item>
+              <a
+                href={item.href}
+                class="menu__link"
+                data-testid={`nav-link-${item.href.slice(1)}`}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <footer class="nav-menu__secondary" data-nav-secondary>
+      <a href={ctaNav.href} class="nav-menu__cta" data-nav-item data-testid="nav-cta">
+        {ctaNav.label}
+      </a>
+      <div class="nav-menu__social">
+        <span class="nav-menu__follow">Follow:</span>
+        {
+          socialNav.map((item) => (
+            <a
+              href={item.href}
+              class="nav-menu__social-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-barba-prevent
+              data-testid={`nav-social-${item.label.toLowerCase()}`}
+            >
+              {item.label}
+            </a>
+          ))
+        }
+      </div>
+    </footer>
+  </div>
+</div>
+
+<style>
+  .nav-menu {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-nav);
+    visibility: hidden;
+    pointer-events: none;
+    background: var(--color-light-black);
+  }
+
+  .nav-menu__panel {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    padding: calc(var(--header-height) + var(--space-grid)) var(--header-px) var(--space-2);
+  }
+
+  .nav-menu__primary {
+    flex: 1;
+  }
+
+  .menu.nav {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .menu__item + .menu__item {
+    margin-top: clamp(0.5rem, 2vh, 1rem);
+  }
+
+  .menu__link {
+    display: inline-block;
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 7vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-white);
+    transition: opacity 0.2s ease;
+  }
+
+  .menu__link:hover {
+    opacity: 0.65;
+  }
+
+  .nav-menu__secondary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding-top: var(--space-2);
+    border-top: 1px solid rgb(255 255 255 / 0.12);
+  }
+
+  .nav-menu__cta {
+    font-family: var(--font-heading);
+    font-size: var(--text-title-lg);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-white);
+  }
+
+  .nav-menu__social {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-grid);
+  }
+
+  .nav-menu__follow {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  .nav-menu__social-link {
+    font-family: var(--font-heading);
+    font-size: 0.875rem;
+    letter-spacing: 0.14em;
+    text-decoration: none;
+    color: var(--color-white);
+    opacity: 0.85;
+  }
+
+  .nav-menu__social-link:hover {
+    opacity: 1;
+  }
+</style>

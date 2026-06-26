@@ -1,0 +1,237 @@
+---
+import { buildVimeoEmbedSrc, heroVideo } from '@/data/hero';
+
+const { vimeoId, posterUrl: posterOverride, tintOpacity, loaderText } = heroVideo;
+
+async function resolvePosterUrl(id: string): Promise<string> {
+  if (posterOverride) return posterOverride;
+
+  try {
+    const res = await fetch(
+      `https://vimeo.com/api/oembed.json?url=https://vimeo.com/${id}&width=1920`,
+    );
+    if (res.ok) {
+      const data = (await res.json()) as { thumbnail_url?: string };
+      if (data.thumbnail_url) return data.thumbnail_url;
+    }
+  } catch {
+    /* fall through to CDN fallback */
+  }
+
+  return `https://vumbnail.com/${id}.jpg`;
+}
+
+const posterUrl = await resolvePosterUrl(vimeoId);
+const embedSrc = buildVimeoEmbedSrc(vimeoId);
+---
+
+<section
+  id="hero"
+  class="header_video hero-video"
+  data-hero-video
+  data-testid="hero-section"
+  style={`--hero-tint: ${tintOpacity}`}
+>
+  <!-- L1: poster — visible instantly while iframe loads -->
+  <span
+    class="visor"
+    aria-hidden="true"
+    style={`--hero-poster: url("${posterUrl}")`}
+  ></span>
+
+  <!-- L2: vimeo — src deferred until page skeleton is ready (see hero-video.ts) -->
+  <div class="hero-video__media">
+    <iframe
+      id="headerVideo"
+      class="hero-video__iframe"
+      data-src={embedSrc}
+      data-testid="hero-video-iframe"
+      title="Hero video"
+      allow="autoplay; fullscreen; picture-in-picture"
+      allowfullscreen
+    ></iframe>
+  </div>
+
+  <!-- L3: atmospheric veil — hides buffering blur & player spinner until play -->
+  <div class="tinted_window" data-tinted-window aria-hidden="true"></div>
+
+  <!--
+    L4: Gatekeeper — play icon shows immediately (video may still buffer).
+    Tap triggers ~1.65s GSAP reveal; animation time buys buffer headroom.
+  -->
+  <a
+    href="#"
+    class="play_btn play_home_video mob"
+    data-touch-gate
+    data-testid="hero-play-gate"
+    aria-label="Play video"
+  >
+    <span class="play_btn__icon" data-play-icon aria-hidden="true"></span>
+  </a>
+
+  <div class="video-loader" id="video-loader" data-video-loader data-testid="hero-video-loader" aria-live="polite">
+    {loaderText}
+  </div>
+</section>
+
+<script>
+  import { initHeroVideo } from '@/scripts/hero-video';
+
+  initHeroVideo();
+</script>
+
+<style>
+  .hero-video {
+    position: relative;
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+    scroll-margin-top: var(--header-height);
+  }
+
+  .visor {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-color: var(--color-black);
+    background-image: var(--hero-poster);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .hero-video__media {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: none;
+    transform-origin: center center;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+  }
+
+  .hero-video.is-video-ready .hero-video__media {
+    opacity: 1;
+  }
+
+  .hero-video__iframe {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100vw, 177.78vh);
+    height: max(56.25vw, 100vh);
+    border: 0;
+    translate: -50% -50%;
+    pointer-events: none;
+  }
+
+  .tinted_window {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    /*
+     * Semi-transparent veil: intentional mood + masks Vimeo/YouTube
+     * loading spinners and early-frame blur while iframe buffers below.
+     */
+    background:
+      radial-gradient(
+        ellipse 120% 100% at 50% 50%,
+        rgb(0 0 0 / calc(var(--hero-tint) * 0.65)) 0%,
+        rgb(0 0 0 / var(--hero-tint)) 100%
+      );
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    opacity: 1;
+    transition: opacity 0.4s ease;
+  }
+
+  .hero-video.is-revealing .tinted_window {
+    transition: none;
+  }
+
+  .hero-video.is-unlocked .tinted_window {
+    opacity: 0;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .video-loader {
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    margin: 0;
+    padding: 0;
+    pointer-events: none;
+    font-family: var(--font-heading);
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #fff;
+    opacity: 0.5;
+    animation: fadePulse 2s infinite ease-in-out;
+  }
+
+  @keyframes fadePulse {
+    0%,
+    100% {
+      opacity: 0.2;
+    }
+
+    50% {
+      opacity: 0.7;
+    }
+  }
+
+  .play_btn {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0);
+    -webkit-tap-highlight-color: transparent;
+    text-decoration: none;
+    opacity: 1;
+  }
+
+  .play_btn__icon {
+    display: block;
+    width: 70px;
+    height: 70px;
+    flex-shrink: 0;
+    background: url('/icons/flow_icon_play.svg') center / contain no-repeat;
+    pointer-events: none;
+    transform-origin: center center;
+  }
+
+  .hero-video.is-unlocked .play_btn {
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .hero-video.is-unlocked .hero-video__iframe {
+    pointer-events: auto;
+  }
+
+  /* Desktop: no touch gate — interact with video directly */
+  @media (min-width: 768px) {
+    .play_btn.mob {
+      display: none;
+    }
+
+    .hero-video__iframe {
+      pointer-events: auto;
+    }
+  }
+</style>

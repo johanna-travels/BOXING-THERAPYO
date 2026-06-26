@@ -6,287 +6,123 @@
   --font-body: 'Bebas Neue', system-ui, sans-serif;
 
   --color-black: #000000;
+  --color-light-black: #141414;
+  --color-nav-dark: rgb(15, 21, 26);
   --color-white: #ffffff;
-  --color-gray: #767676;
-  --color-dark-gray: #bebebe;
-  --color-light-gray: #e0e0e0;
-  --color-off-white: #ebeded;
-
-  --color-primary: #2566e8;
-  --color-primary-dark: #1657bb;
-  --color-error: #c62828;
-  --color-error-dark: #9a1c1f;
-  --color-success: #07bc0c;
-  --color-warning: #f1c40f;
-  --color-info: #3498db;
-
-  --spacing-breathe-xs: clamp(1rem, 3vw, 1.5rem);
-  --spacing-breathe-sm: clamp(1.5rem, 4vw, 2.5rem);
-  --spacing-breathe-md: clamp(2.5rem, 6vw, 4rem);
-  --spacing-breathe-lg: clamp(3.5rem, 8vw, 6rem);
-  --spacing-breathe-xl: clamp(4.5rem, 10vw, 8rem);
 }
 
 :root {
-  /* Stacking order ("layer cake") — avoids magic z-index numbers */
-  --z-bg-base: -2;
-  --z-bg-video: -1;
-  --z-content: 1;
-  --z-overlay: 10;
+  --z-nav: 998;
+  --z-header: 999;
+  --z-transition: 20;
+  --header-height: calc(max(var(--header-pt), env(safe-area-inset-top)) + var(--touch-target) + var(--header-pb));
+
+  /* Google / Material baseline (16px root, 8px grid) */
+  --font-size-base: 16px;
+  --line-height-base: 1.5;
+  --space-grid: 8px;
+  --space-2: 16px;
+  --icon-size: 24px;
+  --touch-target: 48px;
+  --header-pt: 10px;
+  --header-px: 16px;
+  --header-pb: 8px;
+
+  /* Material type scale */
+  --text-title-lg: 1.375rem; /* 22px */
+  --text-headline-sm: 1.5rem; /* 24px */
+  --text-headline-md: 1.75rem; /* 28px */
+  --text-headline-lg: 2rem; /* 32px */
 }
 
 @layer base {
-  * {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
 
   html {
-    height: 100%;
-    scroll-snap-type: y mandatory;
-    scroll-behavior: auto;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    overscroll-behavior-y: none;
-    -webkit-overflow-scrolling: touch;
-    scroll-padding-top: env(safe-area-inset-top, 0);
-    scroll-padding-bottom: env(safe-area-inset-bottom, 0);
+    font-size: var(--font-size-base);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   html,
   body {
     margin: 0;
-    min-height: 100%;
     min-height: 100dvh;
-    background: var(--color-black);
-    color: var(--color-white);
-    font-family: var(--font-body);
-    font-weight: 400;
-    letter-spacing: 0.04em;
   }
 
   body {
-    isolation: isolate; /* Ensures children don't conflict with elements outside the body (like browser UI) */
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: var(--line-height-base);
+    letter-spacing: 0.04em;
+    background: var(--color-black);
+    color: var(--color-white);
   }
 
   h1,
   h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  h3 {
     font-family: var(--font-heading);
     font-weight: 700;
     letter-spacing: -0.02em;
-    line-height: 1.05;
+    line-height: 1.25;
     text-transform: uppercase;
   }
 
   h1 {
-    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-size: var(--text-headline-lg);
   }
 
   h2 {
-    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-size: var(--text-headline-md);
   }
 
   h3 {
-    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-size: var(--text-headline-sm);
   }
 
-  h4 {
-    font-size: clamp(1.25rem, 3vw, 2rem);
+  p {
+    font-size: 1rem;
+    line-height: var(--line-height-base);
   }
 
-  h5 {
-    font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+  body.nav-open {
+    overflow: hidden;
   }
 
-  h6 {
-    font-size: clamp(1rem, 2vw, 1.25rem);
+  body.nav-open .site-header {
+    background: transparent !important;
   }
 
-  p,
-  label,
-  a {
-    font-family: var(--font-body);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+  body.is-header-active.nav-open .site-header {
+    background: transparent !important;
   }
 
-  a {
-    color: var(--color-primary);
-    text-decoration: none;
-    transition: color 0.2s ease;
+  body.is-playing .site-header {
+    /* transparent + compact — GSAP drives values; fallback for no-JS */
+    background: transparent;
   }
 
-  a:hover {
-    color: var(--color-primary-dark);
-    text-decoration: underline;
+  body.is-header-active .site-header {
+    padding-top: max(6px, env(safe-area-inset-top));
+    padding-bottom: 4px;
   }
 
-  a:active {
-    color: var(--color-primary-dark);
-  }
-
-  .btn-primary {
-    display: inline-block;
-    background: var(--color-primary);
-    color: var(--color-white);
-    border: 1px solid var(--color-primary);
-    transition: background-color 0.2s ease, border-color 0.2s ease;
-  }
-
-  .btn-primary:hover {
-    background: var(--color-primary-dark);
-    border-color: var(--color-primary-dark);
-    color: var(--color-white);
-    text-decoration: none;
-  }
-
-  .btn-primary:active {
-    background: var(--color-primary-dark);
-    border-color: var(--color-primary-dark);
-  }
-
-  .btn-secondary {
-    display: inline-block;
-    background: var(--color-white);
-    color: var(--color-black);
-    border: 1px solid var(--color-off-white);
-    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-  }
-
-  .btn-secondary:hover {
-    background: var(--color-off-white);
-    border-color: var(--color-light-gray);
-    color: var(--color-black);
-    text-decoration: none;
-  }
-
-  .btn-secondary:active {
-    background: var(--color-light-gray);
-    border-color: var(--color-dark-gray);
-  }
-}
-
-@layer utilities {
-  .py-breathe-xs {
-    padding-block: var(--spacing-breathe-xs);
-  }
-
-  .py-breathe-sm {
-    padding-block: var(--spacing-breathe-sm);
-  }
-
-  .py-breathe-md {
-    padding-block: var(--spacing-breathe-md);
-  }
-
-  .py-breathe-lg {
-    padding-block: var(--spacing-breathe-lg);
-  }
-
-  .px-breathe-xs {
-    padding-inline: var(--spacing-breathe-xs);
-  }
-
-  .px-breathe-sm {
-    padding-inline: var(--spacing-breathe-sm);
-  }
-
-  .section-gap {
-    margin-block-end: var(--spacing-breathe-md);
-  }
-
-  .font-heading {
-    font-family: var(--font-heading);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    text-transform: uppercase;
-  }
-
-  .font-body {
-    font-family: var(--font-body);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  .text-status-error {
-    color: var(--color-error);
-  }
-
-  .text-status-success {
-    color: var(--color-success);
-  }
-
-  .text-status-warning {
-    color: var(--color-warning);
-  }
-
-  .text-status-info {
-    color: var(--color-info);
-  }
-
-  .alert {
-    padding: 0.875rem 1rem;
-    border-radius: 0.375rem;
-    border: 1px solid transparent;
-    font-family: var(--font-body);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  .alert-error {
-    background: rgb(154 28 31 / 0.15);
-    border-color: var(--color-error-dark);
-    color: var(--color-error);
-  }
-
-  .alert-success {
-    background: rgb(7 188 12 / 0.12);
-    border-color: var(--color-success);
-    color: var(--color-success);
-  }
-
-  .alert-warning {
-    background: rgb(241 196 15 / 0.14);
-    border-color: var(--color-warning);
-    color: var(--color-warning);
-  }
-
-  .alert-info {
-    background: rgb(52 152 219 / 0.14);
-    border-color: var(--color-info);
-    color: var(--color-info);
-  }
-}
-
-/* Mobile: natural vertical scrolling + white theme for the image feed */
-@media (max-width: 767px) {
-  html {
-    height: auto;
-    scroll-snap-type: none;
-  }
-
-  html,
-  body {
-    height: auto;
+  .landing__section {
+    display: flex;
     min-height: 100dvh;
-    overflow-y: auto;
-    background: var(--color-white);
-    color: var(--color-black);
+    align-items: center;
+    justify-content: center;
+    scroll-margin-top: var(--header-height);
+    padding: var(--space-2);
+    text-align: center;
   }
-}
 
-/* Wrapper for third-party background layers (canvas, WebGL, video, etc.) */
-.untouchable-background-container {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: var(--z-bg-video);
-}
-
-/* Ensure the library's internal elements also don't block clicks */
-.untouchable-background-container * {
-  pointer-events: none !important;
+  .landing__section:nth-child(even) {
+    background: var(--color-light-black);
+  }
 }

@@ -1,0 +1,75 @@
+---
+import Logo from '@/components/Logo.astro';
+import MenuIcon from '@/components/MenuIcon.astro';
+---
+
+<header class="site-header ready" data-site-header data-testid="site-header">
+  <a href="#hero" class="index_link site-header__logo" data-testid="site-logo">
+    <Logo class="logo logo--light" />
+  </a>
+  <MenuIcon />
+</header>
+
+<style>
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: var(--z-header);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding: max(var(--header-pt), env(safe-area-inset-top)) var(--header-px) var(--header-pb);
+    background: transparent;
+    transition: transform 0.3s ease, opacity 0.3s ease, padding 0.45s ease;
+    will-change: transform, opacity;
+  }
+
+  .site-header.is-hidden {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .site-header__logo {
+    text-decoration: none;
+  }
+</style>
+
+<script>
+  let lastScroll = 0;
+
+  const header = document.querySelector<HTMLElement>('[data-site-header]');
+  if (header) {
+    window.addEventListener(
+      'scroll',
+      () => {
+        const currentScroll = window.pageYOffset;
+
+        if (document.body.classList.contains('nav-open')) {
+          header.classList.remove('is-hidden');
+          lastScroll = currentScroll;
+          return;
+        }
+
+        if (currentScroll <= 0) {
+          header.classList.remove('is-hidden');
+          lastScroll = currentScroll;
+          return;
+        }
+
+        if (currentScroll > lastScroll && !header.classList.contains('is-hidden')) {
+          header.classList.add('is-hidden');
+        } else if (currentScroll < lastScroll && header.classList.contains('is-hidden')) {
+          header.classList.remove('is-hidden');
+        }
+
+        lastScroll = currentScroll;
+      },
+      { passive: true },
+    );
+  }
+</script>
