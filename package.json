@@ -9,7 +9,16 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "postinstall": "playwright install chromium",
+    "check": "playwright test --project=chromium",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui --ui-host=127.0.0.1",
+    "test:e2e:headed": "PW_WATCH=1 playwright test --headed",
+    "test:overview": "playwright test tests/overview.spec.ts --project=chromium",
+    "test:navigation": "playwright test tests/navigation.spec.ts --project=chromium",
+    "test:hero": "playwright test tests/hero.spec.ts",
+    "test:about": "playwright test tests/about.spec.ts --project=chromium"
   },
   "dependencies": {
     "@barba/core": "^2.10.3",
@@ -21,6 +30,8 @@
     "tailwindcss": "^4.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.0",
+    "@types/node": "^22.15.0",
     "typescript": "^5.9.2"
   }
 }
