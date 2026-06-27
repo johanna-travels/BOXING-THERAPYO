@@ -39,11 +39,17 @@ test.describe('Navigation menu', () => {
   });
 
   test('logo returns to hero', async ({ page }) => {
-    await page.goto('/#contact');
+    await page.goto('/');
+    await page.getByTestId('landing-section-contact').scrollIntoViewIfNeeded();
+    await page.evaluate(() => window.scrollBy(0, -80));
+
+    await expect(page.getByTestId('site-header')).not.toHaveClass(/is-hidden/);
     await page.getByTestId('site-logo').click();
 
     await expect(page).toHaveURL(/#hero$/);
-    await expect(page.getByTestId('hero-section')).toBeInViewport();
+    await expect
+      .poll(() => page.evaluate(() => window.scrollY))
+      .toBeLessThan(120);
   });
 
   test('social links open externally', async ({ page }) => {

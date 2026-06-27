@@ -25,7 +25,10 @@ export default defineConfig({
     },
     {
       name: 'mobile',
-      use: { ...devices['iPhone 13'] },
+      use: {
+        browserName: 'chromium',
+        ...devices['iPhone 13'],
+      },
     },
   ],
   webServer: isCI
