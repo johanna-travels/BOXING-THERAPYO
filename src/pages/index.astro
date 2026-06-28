@@ -1,17 +1,23 @@
 ---
 import HeroVideo from '@/components/HeroVideo.astro';
 import LandingSection from '@/components/LandingSection.astro';
+import ServicesSection from '@/components/ServicesSection.astro';
 import Layout from '@/layouts/Layout.astro';
 import { sections } from '@/data/nav';
+
+const landingSections = sections.filter((section) => section.id !== 'hero' && section.id !== 'services');
 ---
 
 <Layout title="B.TH">
-  <main class="landing" data-testid="landing-main">
+  <div class="landing" data-testid="landing-main">
     <HeroVideo />
+
+    <ServicesSection />
+
     {
-      sections
-        .filter((section) => section.id !== 'hero')
-        .map((section) => <LandingSection id={section.id} title={section.title} />)
+      landingSections.map((section) => (
+        <LandingSection id={section.id} title={section.title} />
+      ))
     }
-  </main>
+  </div>
 </Layout>

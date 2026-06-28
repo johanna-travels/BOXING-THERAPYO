@@ -3,65 +3,76 @@ import gsap from 'gsap';
 import { heroVideo } from '@/data/hero';
 import { setVideoEnded, signalPlayStart } from '@/scripts/gsap/header-transition';
 
-const IFRAME_ID = 'headerVideo';
-const VIMEO_ORIGIN = 'https://player.vimeo.com';
+const VIDEO_ID = 'headerVideo';
+const DESKTOP_MEDIA = '(min-width: 768px)';
 
-const { gatekeeperDuration: GATEKEEPER_DURATION, iframeLoadDelay: IFRAME_LOAD_DELAY } = heroVideo;
+const { gatekeeperDuration: GATEKEEPER_DURATION, videoLoadDelay: VIDEO_LOAD_DELAY } = heroVideo;
 
-let windowMessageBound = false;
+function isDesktopViewport(): boolean {
+  return window.matchMedia(DESKTOP_MEDIA).matches;
+}
 
-function bindVimeoEvents(iframe: HTMLIFrameElement): void {
-  postToVimeo(iframe, 'addEventListener', 'finish');
-  postToVimeo(iframe, 'addEventListener', 'play');
+function hydrateVideoSources(video: HTMLVideoElement): void {
+  if (video.dataset.hydrated === 'true') return;
 
-  if (windowMessageBound) return;
-  windowMessageBound = true;
+  video.querySelectorAll<HTMLSourceElement>('source[data-src]').forEach((source) => {
+    const src = source.dataset.src;
+    if (src) source.src = src;
+  });
 
-  window.addEventListener('message', (event) => {
-    if (event.origin !== VIMEO_ORIGIN) return;
+  video.dataset.hydrated = 'true';
+  video.load();
+}
 
-    try {
-      const data = JSON.parse(event.data as string) as { event?: string };
-      if (data.event === 'finish') setVideoEnded();
-    } catch {
-      /* ignore non-json postMessages */
-    }
+function isVideoHydrated(video: HTMLVideoElement): boolean {
+  return video.dataset.hydrated === 'true';
+}
+
+function bindVideoEvents(video: HTMLVideoElement): void {
+  video.addEventListener('ended', () => setVideoEnded(), { passive: true });
+}
+
+function playVideo(video: HTMLVideoElement): void {
+  void video.play().catch(() => {
+    /* autoplay blocked — gatekeeper or user gesture will retry */
   });
 }
 
-function postToVimeo(iframe: HTMLIFrameElement, method: string, value?: unknown): void {
-  const payload = value === undefined ? { method } : { method, value };
-  iframe.contentWindow?.postMessage(JSON.stringify(payload), VIMEO_ORIGIN);
-}
-
-function isIframeLoaded(iframe: HTMLIFrameElement): boolean {
-  return Boolean(iframe.src && iframe.src !== 'about:blank');
-}
-
-/** Inject deferred Vimeo src — skeleton first, player second. */
-function loadHeroIframe(iframe: HTMLIFrameElement): Promise<void> {
-  if (isIframeLoaded(iframe)) return Promise.resolve();
-
-  const src = iframe.dataset.src;
-  if (!src) return Promise.resolve();
+/** Inject deferred local sources — skeleton first, video second. */
+function loadHeroVideo(video: HTMLVideoElement): Promise<void> {
+  if (isVideoHydrated(video)) return Promise.resolve();
 
   return new Promise((resolve) => {
-    iframe.addEventListener('load', () => resolve(), { once: true });
-    iframe.src = src;
+    const onReady = (): void => {
+      video.removeEventListener('canplay', onReady);
+      resolve();
+    };
+
+    video.addEventListener('canplay', onReady, { once: true });
+    hydrateVideoSources(video);
   });
 }
 
-function scheduleDeferredIframeLoad(iframe: HTMLIFrameElement, section: HTMLElement): void {
+function markVideoReady(section: HTMLElement): void {
+  section.classList.remove('is-iframe-loading');
+  section.classList.add('is-video-ready');
+  section.dataset.videoReady = 'true';
+}
+
+function scheduleDeferredVideoLoad(video: HTMLVideoElement, section: HTMLElement): void {
   const startLoad = (): void => {
     section.classList.add('is-iframe-loading');
 
     window.setTimeout(() => {
-      void loadHeroIframe(iframe).then(() => {
-        section.classList.remove('is-iframe-loading');
-        section.classList.add('is-video-ready');
-        bindVimeoEvents(iframe);
+      void loadHeroVideo(video).then(() => {
+        markVideoReady(section);
+        bindVideoEvents(video);
+
+        if (isDesktopViewport()) {
+          playVideo(video);
+        }
       });
-    }, IFRAME_LOAD_DELAY);
+    }, VIDEO_LOAD_DELAY);
   };
 
   if ('requestIdleCallback' in window) {
@@ -73,10 +84,6 @@ function scheduleDeferredIframeLoad(iframe: HTMLIFrameElement, section: HTMLElem
   }
 }
 
-/**
- * L4 gatekeeper reveal — ~1s staged timeline (The Plan: 1s→2s dance).
- * Play icon vanishes fast; tint + zoom linger so Vimeo can buffer underneath.
- */
 function dismissVideoLoader(loader: HTMLElement | null): void {
   if (!loader) return;
 
@@ -97,7 +104,7 @@ function runGatekeeperReveal({
   media,
   visor,
   loader,
-  iframe,
+  video,
 }: {
   section: HTMLElement;
   touchGate: HTMLAnchorElement;
@@ -106,14 +113,15 @@ function runGatekeeperReveal({
   media: HTMLElement;
   visor: HTMLElement | null;
   loader: HTMLElement | null;
-  iframe: HTMLIFrameElement;
+  video: HTMLVideoElement;
 }): void {
   section.classList.add('is-playing');
   dismissVideoLoader(loader);
-  void loadHeroIframe(iframe).then(() => {
-    bindVimeoEvents(iframe);
-    postToVimeo(iframe, 'setMuted', true);
-    postToVimeo(iframe, 'play');
+
+  void loadHeroVideo(video).then(() => {
+    markVideoReady(section);
+    bindVideoEvents(video);
+    playVideo(video);
   });
 
   signalPlayStart();
@@ -196,11 +204,11 @@ export function initHeroVideo(): void {
   const media = section?.querySelector<HTMLElement>('.hero-video__media');
   const visor = section?.querySelector<HTMLElement>('.visor');
   const loader = document.getElementById('video-loader');
-  const iframe = document.getElementById(IFRAME_ID) as HTMLIFrameElement | null;
+  const video = document.getElementById(VIDEO_ID) as HTMLVideoElement | null;
 
-  if (!section || !touchGate || !playIcon || !tint || !media || !iframe) return;
+  if (!section || !touchGate || !playIcon || !tint || !media || !video) return;
 
-  scheduleDeferredIframeLoad(iframe, section);
+  scheduleDeferredVideoLoad(video, section);
 
   let isUnlocking = false;
 
@@ -216,7 +224,7 @@ export function initHeroVideo(): void {
       media,
       visor,
       loader,
-      iframe,
+      video,
     });
   };
 

@@ -112,6 +112,19 @@
     padding-bottom: 4px;
   }
 
+  #smooth-wrapper {
+    overflow: hidden;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  #smooth-content {
+    overflow: visible;
+    will-change: transform;
+  }
+
   .landing__section {
     display: flex;
     min-height: 100dvh;

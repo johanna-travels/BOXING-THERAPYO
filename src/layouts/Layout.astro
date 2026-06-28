@@ -18,13 +18,20 @@ const { title = 'Site' } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
+    <!-- position:fixed layers must stay outside #smooth-wrapper (transform on #smooth-content breaks viewport-fixed) -->
     <SiteHeader />
     <NavMenu />
-    <slot />
+    <main id="smooth-wrapper">
+      <div id="smooth-content">
+        <slot />
+      </div>
+    </main>
     <script>
       import { initHeaderTransition } from '@/scripts/gsap/header-transition';
       import { initNavMenu } from '@/scripts/gsap/nav-menu';
+      import { initScrollSmoother } from '@/scripts/gsap/scroll-smoother';
 
+      initScrollSmoother();
       initHeaderTransition();
       initNavMenu();
     </script>

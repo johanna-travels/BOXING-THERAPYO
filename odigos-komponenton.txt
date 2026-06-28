@@ -1,0 +1,143 @@
+ΟΔΗΓΟΣ — ΤΙ ΕΚΑΝΑΜΕ & ΤΙ ΚΑΝΕΙΣ ΣΕ ΚΑΘΕ COMPONENT
+(γραμμένο απλά, σαν να είσαι 5 χρονών)
+
+════════════════════════════════════════
+ΤΙ ΕΚΑΝΑΜΕ ΣΤΟ SITE (η ιστορία)
+════════════════════════════════════════
+
+1. ΒΙΝΤΕΟ ΣΤΟ ΣΠΙΤΙ (local)
+   Πριν: το βίντεο έρχονταν από το internet (Vimeo) — αργό, σαν να περιμένεις
+   το ταχυδρόμο κάθε φορά.
+   Τώρα: το βίντεο μένει στο δικό μας σπίτι (φάκελος public/videos/).
+   Γρήγορο. Δεν χρειάζεται internet για να φορτώσει.
+
+2. ΕΙΚΟΝΑ-ΚΟΥΒΕΡΤΑ (poster)
+   Πριν φορτώσει το βίντεο, βλέπεις μια όμορφη εικόνα.
+   Κι αυτή είναι δική μας: public/images/hero-poster.jpg
+   Σαν το εξώφυλλο ενός βιβλίου — φαίνεται αμέσως.
+
+3. ΚΕΦΑΛΙ (header) "ΕΤΟΙΜΟ"
+   Το πάνω μέρος της σελίδας (logo + menu) ξέρει πότε το βίντεο παίζει.
+   Έχει class "ready" και data-header-ready="true" όταν είναι έτοιμο.
+   Ένα scroll listener μόνο — όχι δύο. Πιο γρήγορο.
+
+4. ΟΝΟΜΑΤΑ ΓΙΑ ΤΑ TESTS (data-testid)
+   Σαν sticky notes με όνομα πάνω σε κάθε πράγμα:
+   - site-header
+   - site-logo
+   - hero-video-player
+   - hero-play-gate
+   κ.λπ.
+   Τα Playwright tests τα βρίσκουν με getByTestId('το-όνομα').
+
+5. TESTS (Playwright)
+   Ρομπότ που ανοίγει το site και ελέγχει:
+   "Φαίνεται το header; Υπάρχει το βίντεο; Δουλεύει το menu;"
+   24 tests περνάνε.
+
+════════════════════════════════════════
+ΤΙ ΒΑΖΕΙΣ ΣΕ ΚΑΘΕ ΝΕΟ COMPONENT
+════════════════════════════════════════
+
+Βήμα 1 — Φτιάξε το component
+   Σαν να φτιάχνεις ένα Lego κομμάτι. Ένα component = ένα δουλειά.
+
+Βήμα 2 — Βάλε data-testid (όνομα για tests)
+   Στο σημαντικό κουμπί / box / link:
+
+   data-testid="το-όνομα-σου"
+
+   Κανόνες ονόματος (απλά):
+   - μικρά γράμματα
+   - παύλες ανάμεσα: hero-play-gate, nav-link-about
+   - πες τι ΕΙΝΑΙ: "contact-form", "pricing-card", όχι "div1"
+
+   Παράδειγμα:
+   <button data-testid="contact-send">Στείλε</button>
+
+Βήμα 3 — Αρχεία στο public/ (όχι internet)
+   Εικόνες → public/images/
+   Βίντεο  → public/videos/
+   Icons   → public/icons/
+
+   Στον κώδικα:
+   const base = import.meta.env.BASE_URL;
+   const εικόνα = `${base}images/η-εικόνα.jpg`;
+
+   Γιατί; Γρήγορο. Δικό σου. Δεν σπάει αν το internet κοιμάται.
+
+Βήμα 4 — Γρήγορο φόρτωμα (performance)
+   - Μην φορτώνεις βαρύ stuff αμέσως
+   - preload="none" σε video
+   - Φόρτωσε αργότερα (setTimeout / requestIdleCallback)
+   - ΜΗΝ δύο scroll listeners — ένα αρκεί
+
+Βήμα 5 — Γράψε ένα μικρό test
+   Στο tests/ φάκελο, π.χ. tests/contact.spec.ts:
+
+   await page.goto('');
+   await expect(page.getByTestId('contact-send')).toBeVisible();
+
+   Τρέξε:
+   npm run check          (desktop)
+   npm run test:e2e       (όλα)
+
+Βήμα 6 — Playwright base path (ΜΗΝ ξεχνάς!)
+   Το site έχει base: /BOXING-THERAPYO
+   Στα tests:
+   - page.goto('')      → αρχική (ΟΧΙ page.goto('/'))
+   - page.goto('about') → about (ΟΧΙ page.goto('/about'))
+
+════════════════════════════════════════
+CHECKLIST — ΠΡΙΝ ΠΕΙΣ "ΤΕΛΟΣ"
+════════════════════════════════════════
+
+[ ] Έβαλα data-testid στα σημαντικά κομμάτια
+[ ] Τα αρχεία (εικόνες/video) είναι στο public/
+[ ] Χρησιμοποιώ BASE_URL για paths
+[ ] Έγραψα 1 test που ελέγχει ότι φαίνεται
+[ ] npm run build — δεν σπάει
+[ ] npm run check — tests περνάνε
+
+════════════════════════════════════════
+ΠΟΥ ΕΙΝΑΙ ΤΑ ΑΡΧΕΙΑ (για copy-paste ιδέες)
+════════════════════════════════════════
+
+src/components/HeroVideo.astro     → το hero με video
+src/components/SiteHeader.astro    → το header
+src/data/hero.ts                   → ρυθμίσεις video/poster
+src/scripts/hero-video.ts          → logic βίντεο
+src/scripts/gsap/header-transition.ts → header + scroll
+tests/header.spec.ts               → tests header
+tests/hero.spec.ts                 → tests hero
+playwright.config.ts               → base URL tests
+
+════════════════════════════════════════
+ΤΙ ΧΡΕΙΑΖΕΣΑΙ ΕΣΥ ΑΚΟΜΑ (βάλε τα αρχεία)
+════════════════════════════════════════
+
+public/videos/hero.mp4
+public/images/hero-poster.jpg
+
+Χωρίς αυτά: η σελίδα δουλεύει, αλλά το βίντεο δεν παίζει ακόμα.
+
+════════════════════════════════════════
+ΓΡΗΓΟΡΕΣ ΕΝΤΟΛΕΣ
+════════════════════════════════════════
+
+cd /Users/johanna/Desktop/astro-react-app
+npm run dev              → δες το site
+npm run build            → production build
+npm run check            → tests (chromium)
+npm run test:e2e         → όλα τα tests
+
+════════════════════════════════════════
+ΘΥΜΗΣΟΥ (σαν κανόνας του σπιτιού)
+════════════════════════════════════════
+
+1. Κάθε component = ένα data-testid όπου πατάει ο χρήστης
+2. Αρχεία στο σπίτι (public/) — όχι link από internet
+3. Ένα test = μία επιβεβαίωση ότι φαίνεται / δουλεύει
+4. page.goto('') όχι page.goto('/')
+
+Τέλος. Κopiάρεις αυτό το pattern σε κάθε component που φτιάχνεις.

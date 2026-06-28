@@ -6,12 +6,12 @@ interface Props {
 const { title } = Astro.props;
 ---
 
-<main class="page-shell" data-testid="page-shell">
+<div class="page-shell" data-testid="page-shell">
   <div class="page-shell__body">
     <h1 data-testid="page-title">{title}</h1>
     <slot />
   </div>
-</main>
+</div>
 
 <style>
   .page-shell {

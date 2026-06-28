@@ -1,4 +1,6 @@
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { getScrollY } from './scroll-smoother';
 
 const HEADER_SELECTOR = '.site-header';
 const LOGO_SELECTOR = '.site-header__logo .logo';
@@ -17,13 +19,14 @@ type HeaderState = 'idle' | 'playing' | 'dark';
 let styleTween: gsap.core.Tween | null = null;
 let logoTween: gsap.core.Tween | null = null;
 let currentState: HeaderState | null = null;
+let lastScrollY = 0;
 
 function shouldUseDarkMode(): boolean {
   return document.body.classList.contains('video-ended');
 }
 
 function getFlowDelay(): number {
-  return window.scrollY > 0 ? 0 : FLOW_DELAY;
+  return getScrollY() > 0 ? 0 : FLOW_DELAY;
 }
 
 function getHeader(): HTMLElement | null {
@@ -35,7 +38,7 @@ function isFullyHidden(): boolean {
 }
 
 function cancelPendingFlowDelay(): void {
-  if (window.scrollY <= 0) return;
+  if (getScrollY() <= 0) return;
 
   const styleDelayed = styleTween && styleTween.delay() > 0 && !styleTween.isActive();
   const logoDelayed = logoTween && logoTween.delay() > 0 && !logoTween.isActive();
@@ -136,9 +139,37 @@ export function setVideoEnded(): void {
   evaluateHeaderMode();
 }
 
+function updateHeaderScrollHide(): void {
+  const header = getHeader();
+  if (!header) return;
+
+  const currentScroll = getScrollY();
+
+  if (document.body.classList.contains('nav-open')) {
+    header.classList.remove('is-hidden');
+    lastScrollY = currentScroll;
+    return;
+  }
+
+  if (currentScroll <= 0) {
+    header.classList.remove('is-hidden');
+    lastScrollY = currentScroll;
+    return;
+  }
+
+  if (currentScroll > lastScrollY && !header.classList.contains('is-hidden')) {
+    header.classList.add('is-hidden');
+  } else if (currentScroll < lastScrollY && header.classList.contains('is-hidden')) {
+    header.classList.remove('is-hidden');
+  }
+
+  lastScrollY = currentScroll;
+}
+
 function onScroll(): void {
-  document.body.classList.toggle('scrolled', window.scrollY > 0);
+  document.body.classList.toggle('scrolled', getScrollY() > 0);
   cancelPendingFlowDelay();
+  updateHeaderScrollHide();
 
   if (!isFullyHidden()) {
     evaluateHeaderMode();
@@ -147,10 +178,6 @@ function onScroll(): void {
 
 /** Show header when nav opens; re-evaluate GSAP state when visible. */
 export function refreshHeaderVisibility(): void {
-  const header = getHeader();
-  if (document.body.classList.contains('nav-open')) {
-    header?.classList.remove('is-hidden');
-  }
   onScroll();
 }
 
@@ -173,7 +200,9 @@ export function initHeaderTransition(): void {
   }
 
   currentState = 'idle';
+  header?.setAttribute('data-header-ready', 'true');
 
+  ScrollTrigger.addEventListener('scroll', onScroll);
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 }

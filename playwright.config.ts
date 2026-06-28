@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const baseURL = 'http://127.0.0.1:4321';
+const basePath = '/BOXING-THERAPYO';
+const baseURL = `http://127.0.0.1:4321${basePath}/`;
 const isCI = !!process.env.CI;
 
 export default defineConfig({
@@ -33,15 +34,18 @@ export default defineConfig({
   ],
   webServer: isCI
     ? {
-        command: 'npm run build && npm run preview -- --host 127.0.0.1 --port 4321',
+        // Build runs as a separate CI step so failures surface clearly.
+        command: 'npm run preview -- --host 127.0.0.1 --port 4321',
         url: baseURL,
         reuseExistingServer: false,
-        timeout: 120_000,
+        stdout: /ready/i,
+        timeout: 60_000,
       }
     : {
         command: 'npm run dev -- --host 127.0.0.1 --port 4321',
         url: baseURL,
         reuseExistingServer: true,
+        stdout: /ready/i,
         timeout: 60_000,
       },
 });

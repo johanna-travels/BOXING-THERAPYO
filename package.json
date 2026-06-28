@@ -18,6 +18,7 @@
     "test:overview": "playwright test tests/overview.spec.ts --project=chromium",
     "test:navigation": "playwright test tests/navigation.spec.ts --project=chromium",
     "test:hero": "playwright test tests/hero.spec.ts",
+    "test:services": "playwright test tests/services-section.spec.ts --project=chromium",
     "test:about": "playwright test tests/about.spec.ts --project=chromium"
   },
   "dependencies": {

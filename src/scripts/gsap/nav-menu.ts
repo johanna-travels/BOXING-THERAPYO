@@ -1,5 +1,6 @@
 import gsap from 'gsap';
 import { refreshHeaderVisibility } from './header-transition';
+import { getScrollSmoother } from './scroll-smoother';
 
 const SELECTORS = {
   menu: '[data-nav-menu]',
@@ -48,6 +49,12 @@ function getHeaderOffset(): number {
 function scrollToSection(hash: string): void {
   const target = document.querySelector<HTMLElement>(hash);
   if (!target) return;
+
+  const smoother = getScrollSmoother();
+  if (smoother) {
+    smoother.scrollTo(target, true, `top top-=${getHeaderOffset()}`);
+    return;
+  }
 
   const top = target.getBoundingClientRect().top + window.scrollY - getHeaderOffset();
   window.scrollTo({ top, behavior: 'smooth' });

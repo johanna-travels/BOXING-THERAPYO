@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test.describe('Navigation menu', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto('');
   });
 
   test('opens and closes via the toggle', async ({ page }) => {
@@ -39,9 +39,17 @@ test.describe('Navigation menu', () => {
   });
 
   test('logo returns to hero', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('');
     await page.getByTestId('landing-section-contact').scrollIntoViewIfNeeded();
-    await page.evaluate(() => window.scrollBy(0, -80));
+
+    await page.evaluate(async () => {
+      const start = window.scrollY;
+      for (let i = 0; i < 8; i += 1) {
+        window.scrollBy(0, -120);
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+      }
+      return start - window.scrollY;
+    });
 
     await expect(page.getByTestId('site-header')).not.toHaveClass(/is-hidden/);
     await page.getByTestId('site-logo').click();

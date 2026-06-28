@@ -1,0 +1,116 @@
+SERVICES SECTION + SCROLLSMOOTHER PARALLAX — LIBRARY WARNINGS
+================================================================
+Component: src/components/ServicesSection.astro
+Init:      src/scripts/gsap/scroll-smoother.ts
+Tests:     tests/services-section.spec.ts
+
+Run before you copy into another project:
+  npm run test:services
+
+================================================================
+HARD REQUIREMENTS (CHECK EACH — NO EXCEPTIONS)
+================================================================
+
+[ ] 1. SCROLLSMOOTHER INIT
+      gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+      ScrollSmoother.create({
+        wrapper: '#smooth-wrapper',
+        content: '#smooth-content',
+        effects: true,          <-- REQUIRED for data-speed parallax
+        normalizeScroll: true,
+      });
+
+[ ] 2. DOM SHELL (exact ids)
+      <body>
+        <!-- ALL position:fixed elements HERE — never inside smooth-content -->
+        <header>...</header>
+        <nav>...</nav>
+
+        <main id="smooth-wrapper">
+          <div id="smooth-content">
+            <ServicesSection />   <!-- parallax lives inside content only -->
+          </div>
+        </main>
+      </body>
+
+[ ] 3. POSITION:FIXED OUTSIDE WRAPPER
+      #smooth-content gets a CSS transform from ScrollSmoother.
+      Browsers create a new containing block → fixed inside content
+      sticks to content, NOT the viewport. That is expected CSS behavior.
+
+      KEEP OUTSIDE #smooth-wrapper:
+        - site header
+        - nav overlay
+        - page transition curtain (.transition)
+        - loaders / modals / toasts
+
+      INSIDE #smooth-content OK:
+        - position: absolute / relative parallax layers
+        - ScrollTrigger pin (not CSS position:fixed)
+
+[ ] 4. DATA-SPEED VALUES (this component — do not change without retesting)
+      watermark  data-speed="0.5"   half scroll speed (lags behind)
+      title      data-speed="0.85"  slightly slower than scroll
+
+      Reference:
+        data-speed="0.5"   half speed
+        data-speed="2"     double speed
+        data-speed="1"     normal
+        data-speed="auto"  auto from container travel
+
+[ ] 5. INIT ORDER
+      1. initScrollSmoother()   first
+      2. initHeaderTransition()
+      3. initNavMenu()
+      ScrollTriggers / effects must register after smoother exists.
+
+[ ] 6. SCROLL HELPERS
+      Do NOT use window.scrollY alone when ScrollSmoother is active.
+      Use smoother.scrollTop() or smoother.scrollTo(target).
+      Nav hash links must call ScrollSmoother.get()?.scrollTo().
+
+[ ] 7. MOBILE / iOS
+      normalizeScroll: true does NOT stop iOS Safari address bar
+      show/hide in portrait. Apple blocks that — not a GSAP bug.
+
+      If viewport resize causes ScrollTrigger jump/recalc:
+        ScrollTrigger.config({ ignoreMobileResize: true });
+
+[ ] 8. SECTION CSS
+      Parallax section needs:
+        position: relative;
+        overflow: hidden;
+      Parallax layers use position: absolute (not fixed).
+
+[ ] 9. WHITE BACKGROUND
+      Scoped on .services-section in the component — not nth-child(even).
+      Services is 2nd child of landing; global even-row rule would override
+      without an explicit white rule on this section.
+
+[ ] 10. ACCESSIBILITY
+       Watermark is aria-hidden="true" (decorative duplicate text).
+       Visible heading remains the single accessible "Services" label.
+
+================================================================
+COPY CHECKLIST (new project)
+================================================================
+
+[ ] gsap package installed (^3.12+ includes ScrollSmoother)
+[ ] scroll-smoother.ts copied + wired in layout script
+[ ] Layout has #smooth-wrapper / #smooth-content
+[ ] Fixed header/nav outside wrapper
+[ ] effects: true in ScrollSmoother.create()
+[ ] ignoreMobileResize + normalizeScroll configured
+[ ] ServicesSection.astro copied
+[ ] global.css has #smooth-wrapper { position:fixed; overflow:hidden; inset:0 }
+[ ] npm run test:services passes
+
+================================================================
+KNOWN NON-ISSUES (do not "fix")
+================================================================
+
+- Fixed elements inside #smooth-content attach to content, not viewport.
+- iOS address bar still animates in portrait with normalizeScroll.
+- Parallax layers get inline transform from GSAP — that is correct.
+
+================================================================

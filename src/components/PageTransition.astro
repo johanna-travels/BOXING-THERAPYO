@@ -10,6 +10,10 @@ const { color = 'rgb(235, 75, 61)' } = Astro.props;
   <div class="transition__middle" style={`background-color: ${color};`}></div>
 </div>
 
+<!--
+  Mount outside #smooth-wrapper in Layout.astro — position:fixed inside smooth-content
+  anchors to the transformed layer, not the viewport.
+-->
 <style>
   .transition {
     position: fixed;

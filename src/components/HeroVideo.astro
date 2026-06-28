@@ -1,28 +1,13 @@
 ---
-import { buildVimeoEmbedSrc, heroVideo } from '@/data/hero';
+import { heroVideo } from '@/data/hero';
 
-const { vimeoId, posterUrl: posterOverride, tintOpacity, loaderText } = heroVideo;
+const base = import.meta.env.BASE_URL;
+const asset = (path: string) => `${base}${path}`;
 
-async function resolvePosterUrl(id: string): Promise<string> {
-  if (posterOverride) return posterOverride;
-
-  try {
-    const res = await fetch(
-      `https://vimeo.com/api/oembed.json?url=https://vimeo.com/${id}&width=1920`,
-    );
-    if (res.ok) {
-      const data = (await res.json()) as { thumbnail_url?: string };
-      if (data.thumbnail_url) return data.thumbnail_url;
-    }
-  } catch {
-    /* fall through to CDN fallback */
-  }
-
-  return `https://vumbnail.com/${id}.jpg`;
-}
-
-const posterUrl = await resolvePosterUrl(vimeoId);
-const embedSrc = buildVimeoEmbedSrc(vimeoId);
+const { videoSrc, videoSrcWebm, posterUrl, tintOpacity, loaderText } = heroVideo;
+const poster = asset(posterUrl);
+const mp4Src = asset(videoSrc);
+const webmSrc = videoSrcWebm ? asset(videoSrcWebm) : undefined;
 ---
 
 <section
@@ -32,32 +17,41 @@ const embedSrc = buildVimeoEmbedSrc(vimeoId);
   data-testid="hero-section"
   style={`--hero-tint: ${tintOpacity}`}
 >
-  <!-- L1: poster — visible instantly while iframe loads -->
+  <!-- L1: poster — visible instantly while video buffers -->
   <span
     class="visor"
     aria-hidden="true"
-    style={`--hero-poster: url("${posterUrl}")`}
+    style={`--hero-poster: url("${poster}")`}
   ></span>
 
-  <!-- L2: vimeo — src deferred until page skeleton is ready (see hero-video.ts) -->
-  <div class="hero-video__media">
-    <iframe
+  <!-- L2: local video — src deferred until page skeleton is ready (see hero-video.ts) -->
+  <div class="hero-video__media" data-testid="hero-video-media">
+    <video
       id="headerVideo"
-      class="hero-video__iframe"
-      data-src={embedSrc}
-      data-testid="hero-video-iframe"
-      title="Hero video"
-      allow="autoplay; fullscreen; picture-in-picture"
-      allowfullscreen
-    ></iframe>
+      class="hero-video__player"
+      data-testid="hero-video-player"
+      poster={poster}
+      playsinline
+      muted
+      loop
+      preload="none"
+      aria-label="Hero video"
+    >
+      {
+        webmSrc ? (
+          <source data-src={webmSrc} type="video/webm" />
+        ) : null
+      }
+      <source data-src={mp4Src} type="video/mp4" />
+    </video>
   </div>
 
-  <!-- L3: atmospheric veil — hides buffering blur & player spinner until play -->
+  <!-- L3: atmospheric veil — hides buffering blur until play -->
   <div class="tinted_window" data-tinted-window aria-hidden="true"></div>
 
   <!--
     L4: Gatekeeper — play icon shows immediately (video may still buffer).
-    Tap triggers ~1.65s GSAP reveal; animation time buys buffer headroom.
+    Tap triggers ~1s GSAP reveal; animation time buys buffer headroom.
   -->
   <a
     href="#"
@@ -69,7 +63,13 @@ const embedSrc = buildVimeoEmbedSrc(vimeoId);
     <span class="play_btn__icon" data-play-icon aria-hidden="true"></span>
   </a>
 
-  <div class="video-loader" id="video-loader" data-video-loader data-testid="hero-video-loader" aria-live="polite">
+  <div
+    class="video-loader"
+    id="video-loader"
+    data-video-loader
+    data-testid="hero-video-loader"
+    aria-live="polite"
+  >
     {loaderText}
   </div>
 </section>
@@ -115,13 +115,14 @@ const embedSrc = buildVimeoEmbedSrc(vimeoId);
     opacity: 1;
   }
 
-  .hero-video__iframe {
+  .hero-video__player {
     position: absolute;
     top: 50%;
     left: 50%;
     width: max(100vw, 177.78vh);
     height: max(56.25vw, 100vh);
     border: 0;
+    object-fit: cover;
     translate: -50% -50%;
     pointer-events: none;
   }
@@ -131,10 +132,6 @@ const embedSrc = buildVimeoEmbedSrc(vimeoId);
     inset: 0;
     z-index: 2;
     pointer-events: none;
-    /*
-     * Semi-transparent veil: intentional mood + masks Vimeo/YouTube
-     * loading spinners and early-frame blur while iframe buffers below.
-     */
     background:
       radial-gradient(
         ellipse 120% 100% at 50% 50%,
@@ -220,17 +217,17 @@ const embedSrc = buildVimeoEmbedSrc(vimeoId);
     pointer-events: none;
   }
 
-  .hero-video.is-unlocked .hero-video__iframe {
+  .hero-video.is-unlocked .hero-video__player {
     pointer-events: auto;
   }
 
-  /* Desktop: no touch gate — interact with video directly */
+  /* Desktop: no touch gate — video autoplays under the veil */
   @media (min-width: 768px) {
     .play_btn.mob {
       display: none;
     }
 
-    .hero-video__iframe {
+    .hero-video__player {
       pointer-events: auto;
     }
   }
