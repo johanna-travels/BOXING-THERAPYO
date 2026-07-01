@@ -9,11 +9,13 @@
   --color-light-black: #141414;
   --color-nav-dark: rgb(15, 21, 26);
   --color-white: #ffffff;
+  --color-red: #ff4d4d;
 }
 
 :root {
   --z-nav: 998;
   --z-header: 999;
+  --z-intro-loader: 10000;
   --z-transition: 20;
   --header-height: calc(max(var(--header-pt), env(safe-area-inset-top)) + var(--touch-target) + var(--header-pb));
 

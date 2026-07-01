@@ -7,7 +7,10 @@ test.describe('About page', () => {
     await expect(page).toHaveTitle(/About/);
     await expect(page.getByTestId('site-header')).toBeVisible();
     await expect(page.getByTestId('page-shell')).toBeVisible();
-    await expect(page.getByTestId('page-title')).toHaveText('About');
-    await expect(page.getByTestId('page-shell')).toContainText('About page content.');
+    await expect(page.getByTestId('page-title')).toHaveText('About FocusBox');
+    await expect(page.getByTestId('page-shell')).toContainText('FocusBox is a practical');
+    await expect(page.getByTestId('page-shell')).toContainText('Focus');
+    await expect(page.getByTestId('page-shell')).toContainText('Breathing');
+    await expect(page.getByTestId('page-shell')).toContainText('Emotional Control');
   });
 });

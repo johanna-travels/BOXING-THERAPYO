@@ -1,25 +1,16 @@
-/**
- * Hero video orchestration — «The Plan»
- *
- *  0.0s  Poster + tint + «LOADING STORY» loader
- *  0.5s  Video src hydrates hidden — buffers under the veil
- * ~1.0s  Loader fades — play appears, user taps (mobile)
- *  1–2s  GSAP reveal (icon, tint fade, zoom) — buffer headroom
- *  2.0s+ Video playing — feels like an interactive intro, not a load
- */
-export const heroVideo = {
-  /** Local MP4 — place at public/videos/hero.mp4 */
-  videoSrc: 'videos/hero.mp4',
-  /** Optional WebM for smaller delivery (public/videos/hero.webm) */
-  videoSrcWebm: undefined as string | undefined,
-  /** Local poster — instant L1 paint, no build-time network fetch */
-  posterUrl: 'images/hero-poster.jpg',
-  /** L3 veil — masks buffering blur & player chrome (0–1). */
-  tintOpacity: 0.52,
-  /** L4 gatekeeper — GSAP reveal length in seconds (target: 1s → 2s mark). */
-  gatekeeperDuration: 1,
-  /** Deferred video — ms after page idle (target: 0.5s). */
-  videoLoadDelay: 500,
-  /** Branded loader copy — shown until story/video is ready. */
-  loaderText: 'LOADING STORY',
+export const heroContent = {
+  image: {
+    src: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80',
+    alt: 'Unlock Your Creative Potential',
+  },
+  headline: 'Unlock Your Creative Potential',
+  lead: 'Dive into innovative designs, seamless user experiences, and cutting-edge technology. Your journey to greatness starts here.',
+  primaryCta: {
+    label: 'Get Started',
+    href: '#services',
+  },
+  secondaryCta: {
+    label: 'Explore More',
+    href: '#work',
+  },
 } as const;

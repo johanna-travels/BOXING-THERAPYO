@@ -13,8 +13,7 @@ test.describe('Homepage overview', () => {
     await expect(page.getByTestId('nav-toggle')).toBeAttached();
     await expect(page.getByTestId('landing-main')).toBeVisible();
     await expect(page.getByTestId('hero-section')).toBeVisible();
-    await expect(page.getByTestId('hero-video-player')).toBeAttached();
-    await expect(page.getByTestId('hero-video-media')).toBeAttached();
+    await expect(page.getByTestId('hero-image')).toBeVisible();
 
     for (const id of landingSections) {
       await expect(page.getByTestId(`landing-section-${id}`)).toBeAttached();

@@ -1,0 +1,86 @@
+---
+import type { Collection } from '@/data/collections';
+
+interface Props {
+  collection: Collection;
+}
+
+const { collection } = Astro.props;
+---
+
+<article class="collection-card" data-testid={`collection-card-${collection.id}`}>
+  <img
+    src={collection.image}
+    alt={collection.imageAlt}
+    class="collection-card__image"
+    loading="lazy"
+    decoding="async"
+  />
+  <div class="collection-card__overlay">
+    <h3 class="collection-card__title">{collection.title}</h3>
+    <a href={collection.href} class="collection-card__link">Shop Collection</a>
+  </div>
+</article>
+
+<style>
+  .collection-card {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background: var(--color-light-black);
+  }
+
+  .collection-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s ease;
+  }
+
+  .collection-card:hover .collection-card__image {
+    transform: scale(1.06);
+  }
+
+  .collection-card__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    text-align: center;
+    background: linear-gradient(to top, rgb(0 0 0 / 0.65), rgb(0 0 0 / 0.15));
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .collection-card:hover .collection-card__overlay {
+    opacity: 1;
+  }
+
+  .collection-card__title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    color: var(--color-white);
+  }
+
+  .collection-card__link {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-white);
+    border-bottom: 1px solid rgb(255 255 255 / 0.6);
+    padding-bottom: 0.2rem;
+    transition: border-color 0.3s ease;
+  }
+
+  .collection-card__link:hover {
+    border-color: var(--color-white);
+  }
+</style>

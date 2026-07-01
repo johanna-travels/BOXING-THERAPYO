@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Site header', () => {
-  test('is ready for hero video on first paint', async ({ page }) => {
+  test('is ready for hero on first paint', async ({ page }) => {
     await page.goto('');
 
     const header = page.getByTestId('site-header');
@@ -11,15 +11,12 @@ test.describe('Site header', () => {
     await expect(header).not.toHaveClass(/is-hidden/);
   });
 
-  test('hero exposes local video player without eager src', async ({ page }) => {
+  test('hero exposes a high-priority image', async ({ page }) => {
     await page.goto('');
 
-    const player = page.getByTestId('hero-video-player');
-    await expect(player).toBeAttached();
-    await expect(player).toHaveAttribute('preload', 'none');
-    await expect(player).toHaveAttribute('poster', /hero-poster/);
-
-    const eagerSrc = await player.evaluate((el) => (el as HTMLVideoElement).currentSrc);
-    expect(eagerSrc).toBe('');
+    const image = page.getByTestId('hero-image');
+    await expect(image).toBeVisible();
+    await expect(image).toHaveAttribute('loading', 'eager');
+    await expect(image).toHaveAttribute('fetchpriority', 'high');
   });
 });

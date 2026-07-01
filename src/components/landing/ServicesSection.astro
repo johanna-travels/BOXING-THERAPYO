@@ -1,0 +1,204 @@
+---
+import { focusBox, servicesSection } from '@/data/focusbox';
+
+/** data-speed hooks — ScrollSmoother reads these (effects: true in scroll-smoother.ts) */
+const PARALLAX = {
+  watermark: '0.5',
+  title: '0.85',
+} as const;
+---
+
+<section
+  id="services"
+  class="services-section landing__section"
+  data-parallax-section
+  data-testid="landing-section-services"
+>
+  <div class="services-section__stage">
+    <p
+      class="services-section__watermark"
+      data-speed={PARALLAX.watermark}
+      data-testid="services-parallax-watermark"
+      aria-hidden="true"
+    >
+      {servicesSection.watermark}
+    </p>
+
+    <div class="services-section__content">
+      <header class="services-section__header">
+        <h2
+          class="services-section__title"
+          data-speed={PARALLAX.title}
+          data-testid="services-parallax-title"
+        >
+          {servicesSection.headline}
+        </h2>
+        <span class="services-section__rule" aria-hidden="true"></span>
+      </header>
+
+      <p class="services-section__lead" data-testid="services-lead">{focusBox.tagline}</p>
+
+      <ul class="services-section__pillars" data-testid="services-pillars">
+        {
+          focusBox.pillars.map((pillar) => (
+            <li class="services-section__pillar">
+              <h3>{pillar.title}</h3>
+              <p class="services-section__pillar-lead">{pillar.description}</p>
+              <p class="services-section__pillar-detail">{pillar.detail}</p>
+              <ul class="services-section__pillar-points">
+                {pillar.points.map((point) => (
+                  <li>{point}</li>
+                ))}
+              </ul>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .services-section {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-white);
+    color: var(--color-black);
+  }
+
+  .services-section__stage {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: inherit;
+    padding-block: clamp(3rem, 8vh, 5rem);
+  }
+
+  .services-section__watermark {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: clamp(4rem, 18vw, 12rem);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    text-transform: uppercase;
+    color: rgb(255 77 77 / 0.07);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .services-section__content {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 2.5rem);
+    width: min(100%, 72rem);
+    padding-inline: var(--space-2);
+    text-align: center;
+  }
+
+  .services-section__header {
+    display: grid;
+    gap: 1rem;
+    justify-items: center;
+  }
+
+  .services-section__title {
+    margin: 0;
+    font-size: clamp(2.5rem, 10vw, 5rem);
+    letter-spacing: 0.06em;
+    color: var(--color-red);
+  }
+
+  .services-section__rule {
+    display: block;
+    width: 3rem;
+    height: 3px;
+    background: var(--color-red);
+  }
+
+  .services-section__lead {
+    margin: 0 auto;
+    max-width: 42rem;
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    line-height: 1.6;
+    color: rgb(0 0 0 / 0.72);
+  }
+
+  .services-section__pillars {
+    display: grid;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+  }
+
+  .services-section__pillar {
+    padding-top: 1rem;
+    border-top: 2px solid rgb(255 77 77 / 0.35);
+  }
+
+  .services-section__pillar h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-red);
+  }
+
+  .services-section__pillar-lead {
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgb(0 0 0 / 0.82);
+  }
+
+  .services-section__pillar-detail {
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: rgb(0 0 0 / 0.62);
+  }
+
+  .services-section__pillar-points {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .services-section__pillar-points li {
+    position: relative;
+    padding-left: 1rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: rgb(0 0 0 / 0.72);
+  }
+
+  .services-section__pillar-points li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 50%;
+    background: var(--color-red);
+  }
+
+  @media (min-width: 768px) {
+    .services-section__pillars {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 2rem;
+    }
+  }
+</style>

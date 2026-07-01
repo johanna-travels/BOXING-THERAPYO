@@ -1,0 +1,86 @@
+---
+import Reveal from '@/components/ui/Reveal.astro';
+import type { BentoItemData } from '@/data/bento';
+
+interface Props {
+  item: BentoItemData;
+}
+
+const { item } = Astro.props;
+---
+
+<Reveal variant={item.reveal} class:list={['bento-item', item.variant, item.type === 'text' && 'bento-item--text']}>
+  {
+    item.type === 'image' ? (
+      <img
+        src={item.image}
+        alt={item.imageAlt}
+        class="bento-item__image"
+        loading="lazy"
+        decoding="async"
+      />
+    ) : (
+      <div class="bento-item__text">
+        <h3 class="bento-item__title">{item.title}</h3>
+        <p class="bento-item__description">{item.description}</p>
+      </div>
+    )
+  }
+</Reveal>
+
+<style>
+  .bento-item {
+    overflow: hidden;
+    min-height: 220px;
+    background: var(--color-light-black);
+  }
+
+  .bento-item__image {
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+    object-fit: cover;
+    display: block;
+  }
+
+  .bento-item--text {
+    display: flex;
+    align-items: center;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    background: rgb(255 255 255 / 0.04);
+    border: 1px solid rgb(255 255 255 / 0.08);
+  }
+
+  .bento-item__title {
+    margin: 0 0 0.75rem;
+    font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    text-transform: none;
+    color: var(--color-white);
+  }
+
+  .bento-item__description {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: rgb(255 255 255 / 0.65);
+  }
+
+  /* Grid placement variants */
+  :global(.bento-grid) .item-1 {
+    grid-row: span 2;
+  }
+
+  @media (min-width: 768px) {
+    :global(.bento-grid) .item-1 {
+      min-height: 100%;
+    }
+
+    :global(.bento-grid) .item-2,
+    :global(.bento-grid) .item-3,
+    :global(.bento-grid) .item-4 {
+      min-height: 280px;
+    }
+  }
+</style>

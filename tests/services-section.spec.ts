@@ -11,6 +11,15 @@ test.describe('ServicesSection — parallax', () => {
     await page.waitForSelector('#smooth-content');
   });
 
+  test('renders FocusBox pillars and lead copy', async ({ page }) => {
+    const section = page.getByTestId('landing-section-services');
+
+    await expect(section.getByTestId('services-lead')).toContainText('FocusBox is a practical');
+    await expect(section.getByTestId('services-pillars')).toContainText('Focus');
+    await expect(section.getByTestId('services-pillars')).toContainText('Breathing');
+    await expect(section.getByTestId('services-pillars')).toContainText('Emotional Control');
+  });
+
   test('renders section shell with white background', async ({ page }) => {
     const section = page.getByTestId('landing-section-services');
 
@@ -19,7 +28,7 @@ test.describe('ServicesSection — parallax', () => {
     await expect(section).toHaveClass(/landing__section/);
     await expect(section).toHaveAttribute('data-parallax-section', '');
 
-    await expect(section.getByRole('heading', { level: 2, name: 'Services' })).toBeVisible();
+    await expect(section.getByRole('heading', { level: 2, name: 'Breath' })).toBeVisible();
 
     await expect(section).toHaveCSS('background-color', 'rgb(255, 255, 255)');
     await expect(section).toHaveCSS('color', 'rgb(0, 0, 0)');

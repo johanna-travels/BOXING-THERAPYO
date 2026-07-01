@@ -1,13 +1,12 @@
 # Site
 
-Minimal Astro starter with Tailwind, Barba.js, and GSAP.
+Minimal Astro starter with Tailwind, GSAP, and a single-page landing.
 
 ## Stack
 
 - Astro
 - Tailwind CSS v4
-- Barba.js (`@barba/core`)
-- GSAP
+- GSAP (ScrollSmoother, ScrollTrigger)
 - Fonts: Oswald (headings), Bebas Neue (body)
 
 ## Commands
@@ -19,15 +18,36 @@ npm run build
 npm run preview
 ```
 
+## Astro + GSAP
+
+**Start here with your partner:** [`docs/GSAP-ASTRO.md`](docs/GSAP-ASTRO.md)
+
+Three layers: Layout (global scroll) → IntroLoader (overlay) → LandingPage (homepage sections).
+
 ## Structure
 
 ```
 src/
-  components/PageTransition.astro   # Barba curtain overlay
-  layouts/Layout.astro              # Barba wrapper + container
-  pages/index.astro                 # Home
-  pages/about.astro                 # Second page (test transitions)
-  scripts/barba/                    # init + GSAP transitions
-  styles/global.css                 # Tailwind + fonts
-  styles/fonts.css
+  pages/index.astro              ← route only: Layout + LandingPage
+  layouts/Layout.astro           ← shell, ScrollSmoother, initLayout()
+  components/
+    IntroLoader.astro            ← intro overlay (Layer 2)
+    landing/                     ← homepage sections (Layer 3)
+      LandingPage.astro
+      HeroImg.astro
+      ServicesSection.astro
+      LandingSection.astro
+  scripts/gsap/
+    init-layout.ts               ← Layer 1 entry
+    init-landing.ts              ← Layer 3 entry
+    scroll-smoother.ts
+    intro-loader.ts
+    hero.ts
+    scroll-reveal.ts
+    header-transition.ts
+    nav-menu.ts
+  data/                          ← copy & config
+  styles/global.css
+docs/
+  GSAP-ASTRO.md                  ← full GSAP map for the team
 ```

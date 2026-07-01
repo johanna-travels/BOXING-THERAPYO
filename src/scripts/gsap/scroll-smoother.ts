@@ -1,3 +1,7 @@
+/**
+ * Layer 1 — ScrollSmoother wrapper (#smooth-wrapper / #smooth-content).
+ * effects: true enables data-speed parallax on elements inside #smooth-content.
+ */
 import gsap from 'gsap';
 import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';

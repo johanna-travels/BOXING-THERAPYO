@@ -1,10 +1,87 @@
 ---
 import PageShell from '@/components/PageShell.astro';
 import Layout from '@/layouts/Layout.astro';
+import { focusBox } from '@/data/focusbox';
 ---
 
-<Layout title="About">
-  <PageShell title="About">
-    <p>About page content.</p>
+<Layout title="About — FocusBox">
+  <PageShell title="About FocusBox">
+    <p class="about__tagline">{focusBox.tagline}</p>
+    <p class="about__summary">{focusBox.summary}</p>
+
+    <ul class="about__pillars">
+      {
+        focusBox.pillars.map((pillar) => (
+          <li class="about__pillar">
+            <h2>{pillar.title}</h2>
+            <p>{pillar.description}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="about__body">
+      <p>{focusBox.about.intro}</p>
+      {focusBox.about.body.map((paragraph) => <p>{paragraph}</p>)}
+    </div>
   </PageShell>
 </Layout>
+
+<style>
+  .about__tagline {
+    margin: 0;
+    max-width: 36rem;
+    font-size: clamp(1.125rem, 3vw, 1.5rem);
+    line-height: 1.5;
+  }
+
+  .about__summary {
+    margin: 1rem 0 0;
+    max-width: 36rem;
+    color: rgb(255 255 255 / 0.72);
+    line-height: 1.7;
+  }
+
+  .about__pillars {
+    display: grid;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 48rem;
+    margin: 2rem 0 0;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+  }
+
+  .about__pillar h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.125rem;
+    letter-spacing: 0.08em;
+  }
+
+  .about__pillar p {
+    margin: 0;
+    color: rgb(255 255 255 / 0.72);
+    line-height: 1.6;
+  }
+
+  .about__body {
+    display: grid;
+    gap: 1rem;
+    max-width: 36rem;
+    margin-top: 2rem;
+    text-align: left;
+  }
+
+  .about__body p {
+    margin: 0;
+    color: rgb(255 255 255 / 0.72);
+    line-height: 1.7;
+  }
+
+  @media (min-width: 768px) {
+    .about__pillars {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

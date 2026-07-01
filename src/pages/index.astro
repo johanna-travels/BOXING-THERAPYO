@@ -1,23 +1,8 @@
 ---
-import HeroVideo from '@/components/HeroVideo.astro';
-import LandingSection from '@/components/LandingSection.astro';
-import ServicesSection from '@/components/ServicesSection.astro';
+import LandingPage from '@/components/landing/LandingPage.astro';
 import Layout from '@/layouts/Layout.astro';
-import { sections } from '@/data/nav';
-
-const landingSections = sections.filter((section) => section.id !== 'hero' && section.id !== 'services');
 ---
 
 <Layout title="B.TH">
-  <div class="landing" data-testid="landing-main">
-    <HeroVideo />
-
-    <ServicesSection />
-
-    {
-      landingSections.map((section) => (
-        <LandingSection id={section.id} title={section.title} />
-      ))
-    }
-  </div>
+  <LandingPage />
 </Layout>

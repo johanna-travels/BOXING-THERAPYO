@@ -1,0 +1,99 @@
+---
+import { introLoaderBg, introLoaderLines } from '@/data/intro-loader';
+---
+
+<div
+  class="intro-loader"
+  data-intro-loader
+  data-testid="intro-loader"
+  style={`--intro-loader-bg: ${introLoaderBg}`}
+  aria-live="polite"
+>
+  <div
+    class="intro-loader__progress"
+    data-intro-loader-progress
+    data-testid="intro-loader-progress"
+    aria-hidden="true"
+  ></div>
+
+  <div class="intro-loader__content" data-testid="intro-loader-content">
+    {
+      introLoaderLines.map((words) => (
+        <h1 class="intro-loader__line">
+          {words.map((word) => (
+            <span class="intro-loader__word-mask">
+              <span class="intro-loader__word" data-intro-loader-word>
+                {word}
+              </span>
+            </span>
+          ))}
+        </h1>
+      ))
+    }
+  </div>
+</div>
+
+<!-- Layer 2 GSAP — intro overlay; fixed outside #smooth-wrapper — see docs/GSAP-ASTRO.md -->
+<script>
+  import { bindIntroLoader } from '@/scripts/gsap/intro-loader';
+
+  bindIntroLoader();
+</script>
+
+<style>
+  .intro-loader {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-intro-loader);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 2.5rem;
+    background: var(--intro-loader-bg);
+    overflow: hidden;
+    user-select: none;
+  }
+
+  .intro-loader__progress {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0.5rem;
+    height: 100%;
+    background: var(--color-black);
+    transform-origin: top;
+  }
+
+  .intro-loader__content {
+    position: relative;
+    max-width: 56rem;
+  }
+
+  .intro-loader__line {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 1rem;
+    font-size: clamp(2.5rem, 12vw, 6rem);
+    font-weight: 500;
+    line-height: 0.9;
+    letter-spacing: -0.05em;
+    text-transform: uppercase;
+  }
+
+  @media (min-width: 768px) {
+    .intro-loader__line {
+      font-size: clamp(3rem, 8vw, 5rem);
+    }
+  }
+
+  .intro-loader__word-mask {
+    display: inline-block;
+    overflow: hidden;
+  }
+
+  .intro-loader__word {
+    display: inline-block;
+    transform: translateY(100%);
+  }
+</style>

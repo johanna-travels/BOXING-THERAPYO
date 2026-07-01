@@ -1,0 +1,43 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  lead?: string;
+  /** Hook for scroll-reveal.ts — no script in this file */
+  reveal?: 'up' | 'left' | 'right' | 'stagger';
+}
+
+const { id, title, lead, reveal = 'up' } = Astro.props;
+---
+
+<section
+  id={id}
+  class="landing__section"
+  data-testid={`landing-section-${id}`}
+  data-reveal={reveal}
+>
+  <div class="landing__section-inner">
+    <h2>{title}</h2>
+    {lead ? <p class="landing__section-lead">{lead}</p> : null}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .landing__section[data-reveal='up'],
+  .landing__section[data-reveal='left'],
+  .landing__section[data-reveal='right'] {
+    visibility: hidden;
+  }
+
+  .landing__section-inner {
+    max-width: 42rem;
+  }
+
+  .landing__section-lead {
+    margin: 1rem 0 0;
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    line-height: 1.6;
+    color: rgb(255 255 255 / 0.78);
+  }
+</style>
