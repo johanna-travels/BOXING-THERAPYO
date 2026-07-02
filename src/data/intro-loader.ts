@@ -4,5 +4,5 @@ export const introLoaderLines = [
   ['Under', 'Pressure'],
 ] as const;
 
-export const introLoaderBg = 'rgba(0, 0, 0, 0.8)';
+export const introLoaderBg = 'var(--color-white)';
 

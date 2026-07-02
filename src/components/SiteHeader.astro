@@ -1,13 +1,23 @@
 ---
-import Logo from '@/components/Logo.astro';
+import LogoWordmark from '@/components/LogoWordmark.astro';
 import MenuIcon from '@/components/MenuIcon.astro';
 ---
 
 <header class="site-header ready" data-site-header data-testid="site-header">
-  <a href="#hero" class="index_link site-header__logo" data-testid="site-logo">
-    <Logo class="logo logo--light" />
-  </a>
-  <MenuIcon />
+  <div class="nav_1_contain site-header__contain" data-testid="site-header-contain">
+    <a
+      href="#hero"
+      class="index_link nav_1_logo_wrap is-op-0"
+      data-real-logo-wrap
+      data-testid="site-logo"
+    >
+      <div class="logo-mark logo logo--light">
+        <LogoWordmark variant="header" />
+      </div>
+    </a>
+
+    <MenuIcon />
+  </div>
 </header>
 
 <style>
@@ -16,16 +26,27 @@ import MenuIcon from '@/components/MenuIcon.astro';
     top: 0;
     left: 0;
     right: 0;
-    width: 100%;
     z-index: var(--z-header);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-2);
-    padding: max(var(--header-pt), env(safe-area-inset-top)) var(--header-px) var(--header-pb);
+    width: 100%;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: 0;
     background: transparent;
-    transition: transform 0.3s ease, opacity 0.3s ease, padding 0.45s ease;
+    visibility: var(--visible);
+    transition: transform 0.3s ease, opacity 0.3s ease, background-color 0.45s ease;
     will-change: transform, opacity;
+  }
+
+  /* Navigation container — Webflow .nav_1_contain */
+  .nav_1_contain {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 94%;
+    min-height: var(--header-bar-height);
+    margin-inline: auto;
+    padding-top: var(--header-contain-pt);
+    padding-inline: var(--header-contain-px);
+    padding-bottom: var(--header-contain-pb);
   }
 
   .site-header.is-hidden {
@@ -34,7 +55,20 @@ import MenuIcon from '@/components/MenuIcon.astro';
     pointer-events: none;
   }
 
-  .site-header__logo {
+  .nav_1_logo_wrap {
+    position: relative;
+    z-index: 2;
+    flex: 0 0 auto;
+    color: var(--color-white);
     text-decoration: none;
+  }
+
+  .logo-mark {
+    display: block;
+    line-height: 1;
+  }
+
+  .logo--light :global(.logo-wordmark) {
+    color: var(--color-white);
   }
 </style>

@@ -25,8 +25,8 @@
    Σαν sticky notes με όνομα πάνω σε κάθε πράγμα:
    - site-header
    - site-logo
-   - hero-video-player
-   - hero-play-gate
+   - hero-background
+   - hero-section
    κ.λπ.
    Τα Playwright tests τα βρίσκουν με getByTestId('το-όνομα').
 
@@ -103,10 +103,12 @@ CHECKLIST — ΠΡΙΝ ΠΕΙΣ "ΤΕΛΟΣ"
 ΠΟΥ ΕΙΝΑΙ ΤΑ ΑΡΧΕΙΑ (για copy-paste ιδέες)
 ════════════════════════════════════════
 
-src/components/HeroVideo.astro     → το hero με video
-src/components/SiteHeader.astro    → το header
-src/data/hero.ts                   → ρυθμίσεις video/poster
-src/scripts/hero-video.ts          → logic βίντεο
+src/components/landing/HeroSection.astro  → hero shell
+src/components/landing/HeroBackground.astro
+src/data/hero.ts                        → video/poster + cards
+src/scripts/hero-background.ts            → Layer 0 video
+src/scripts/gsap/hero-cards.ts          → card-stack GSAP
+src/components/SiteHeader.astro           → header
 src/scripts/gsap/header-transition.ts → header + scroll
 tests/header.spec.ts               → tests header
 tests/hero.spec.ts                 → tests hero

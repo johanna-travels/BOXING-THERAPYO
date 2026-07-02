@@ -3,19 +3,21 @@
  * Homepage shell — markup + one script entry point.
  * Full Astro + GSAP map: docs/GSAP-ASTRO.md
  */
-import HeroImg from '@/components/landing/HeroImg.astro';
+import HeroSection from '@/components/landing/HeroSection.astro';
 import LandingSection from '@/components/landing/LandingSection.astro';
 import ServicesSection from '@/components/landing/ServicesSection.astro';
+import WorkSection from '@/components/landing/WorkSection.astro';
 import { sections } from '@/data/nav';
 
 const landingSections = sections.filter(
-  (section) => section.id !== 'hero' && section.id !== 'services',
+  (section) => section.id !== 'hero' && section.id !== 'services' && section.id !== 'work',
 );
 ---
 
 <div class="landing" data-testid="landing-main">
-  <HeroImg />
+  <HeroSection />
   <ServicesSection />
+  <WorkSection />
 
   {
     landingSections.map((section) => (

@@ -3,7 +3,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { getScrollY } from './scroll-smoother';
 
 const HEADER_SELECTOR = '.site-header';
-const LOGO_SELECTOR = '.site-header__logo .logo';
+const LOGO_SELECTOR = '[data-real-logo-wrap] .logo-mark, [data-real-logo-wrap] .logo';
 
 /** At top after video — nav waits so hero content reads first. Cancelled on scroll. */
 const FLOW_DELAY = 1.075;
@@ -72,20 +72,14 @@ function applyHeaderState(state: HeaderState, delay = 0): void {
     idle: {
       backgroundColor: COLORS.light,
       logoScale: 1,
-      paddingTop: 10,
-      paddingBottom: 8,
     },
     playing: {
       backgroundColor: COLORS.light,
       logoScale: 0.88,
-      paddingTop: 6,
-      paddingBottom: 4,
     },
     dark: {
       backgroundColor: COLORS.dark,
       logoScale: 0.88,
-      paddingTop: 6,
-      paddingBottom: 4,
     },
   }[state];
 
@@ -94,8 +88,6 @@ function applyHeaderState(state: HeaderState, delay = 0): void {
 
   styleTween = gsap.to(header, {
     backgroundColor: config.backgroundColor,
-    paddingTop: config.paddingTop,
-    paddingBottom: config.paddingBottom,
     delay,
     duration: FLOW_DURATION,
     ease: 'power2.out',
@@ -189,8 +181,7 @@ export function initHeaderTransition(): void {
     header.classList.add('ready');
     gsap.set(header, {
       backgroundColor: COLORS.light,
-      paddingTop: 10,
-      paddingBottom: 8,
+      visibility: 'visible',
       clearProps: 'opacity',
     });
   }

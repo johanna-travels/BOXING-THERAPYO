@@ -64,7 +64,7 @@ test.describe('ServicesSection — parallax', () => {
   });
 
   test('parallax layers move at different rates when scrolled into view', async ({ page }) => {
-    await page.getByTestId('nav-toggle-label').click();
+    await page.getByTestId('nav-hamburger-btn').click();
     await page.getByTestId('nav-link-services').click();
 
     await expect(page).toHaveURL(/#services$/);

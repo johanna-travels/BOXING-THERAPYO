@@ -2,8 +2,6 @@ export const focusBox = {
   name: 'FocusBox',
   tagline:
     'FocusBox is a practical, boxing-inspired method for training focus, breathing, and emotional control under pressure.',
-  summary:
-    'Built on the rhythm of rounds, recovery, and deliberate effort, FocusBox turns boxing fundamentals into tools you can use anywhere—before a meeting, after conflict, or when the day simply will not slow down.',
   pillars: [
     {
       title: 'Focus',
@@ -42,14 +40,6 @@ export const focusBox = {
       ],
     },
   ],
-  about: {
-    intro:
-      'FocusBox was created for people who carry pressure—creators, caregivers, leaders, and anyone who needs a reliable way to reset.',
-    body: [
-      'Sessions combine shadowboxing, breath cues, and short reflective rounds. No sparring required. The goal is not performance in the ring—it is capacity in real life.',
-      'You leave with simple practices: a breath pattern for anxiety, a focus drill for distraction, and a physical cue that brings you back to center when emotions spike.',
-    ],
-  },
 } as const;
 
 export const landingSectionContent: Partial<

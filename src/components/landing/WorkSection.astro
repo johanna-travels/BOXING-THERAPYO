@@ -1,0 +1,335 @@
+---
+/**
+ * Work = pinned card-stack of services (Content Creation / Influencer Marketing /
+ * Social Media Marketing).
+ *
+ * Behaviour (src/scripts/gsap/work-cards.ts):
+ *   - GSAP pin stack (all viewports): cards stack with rotation, scale, fade-out.
+ *   - Image scale 0.3 → 1; text line reveal via SplitText.
+ *   - Pinning instead of CSS sticky (ScrollSmoother breaks sticky).
+ */
+import { workCards, workSection } from '@/data/work';
+---
+
+<section
+  id="work"
+  class="work-section"
+  data-testid="landing-section-work"
+  data-work-section
+  data-animate-theme-to="pink"
+>
+  <header class="work-section__intro">
+    <span class="work-section__eyebrow">{workSection.eyebrow}</span>
+    <h2 class="work-section__headline" data-gsap-squeeze>{workSection.headline}</h2>
+  </header>
+
+  <div class="card_stack_contain" data-work-track>
+    {
+      workCards.map((card, index) => (
+        <div class="slide" data-work-card style={`--slide-index: ${index + 1}`}>
+          <div class="card_stack_layout">
+            <div class="card_stack_content" data-work-content>
+              <span class="card_stack_index" aria-hidden="true">
+                {card.index}
+              </span>
+              <h3 class="card_stack_title" data-work-heading>
+                {card.title}
+              </h3>
+              <p class="card_stack_text" data-work-text>
+                {card.description}
+              </p>
+              <a class="card_stack_cta" href={card.cta.href} data-work-cta>
+                <span>{card.cta.label}</span>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
+
+            <div class="card_stack_img_wrap" data-work-img-wrap>
+              <img
+                class="card_stack_img"
+                src={card.image.src}
+                alt={card.image.alt}
+                width="1600"
+                height="900"
+                loading="lazy"
+                decoding="async"
+                data-work-img
+              />
+            </div>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  /* Transparent so the GSAP-animated page (body) background shows through.
+     data-animate-theme-to="pink" fades body → pink as this section enters. */
+  .work-section {
+    position: relative;
+    background: transparent;
+    color: #ffffff;
+    scroll-margin-top: var(--header-height);
+    padding-inline: var(--site-margin);
+    padding-bottom: max(clamp(3rem, 10vh, 6rem), env(safe-area-inset-bottom, 0px));
+  }
+
+  .work-section__intro {
+    display: grid;
+    justify-items: center;
+    gap: 0.75rem;
+    padding-top: clamp(4rem, 12vh, 8rem);
+    padding-bottom: clamp(1.5rem, 4vh, 2.5rem);
+    text-align: center;
+    color: #ffffff;
+  }
+
+  .work-section__eyebrow {
+    font-family: var(--font-heading);
+    font-size: 0.875rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 0.85);
+  }
+
+  .work-section__headline {
+    margin: 0;
+    font-size: clamp(2.5rem, 10vw, 6rem);
+    letter-spacing: 0.04em;
+    color: #ffffff;
+  }
+
+  /* Anti-flash: hide until text-squeeze.ts splits + reveals it (JS makes it visible) */
+  .work-section__headline[data-gsap-squeeze] {
+    visibility: hidden;
+  }
+
+  .work-section__headline :global(.squeeze-char) {
+    display: inline-block;
+    will-change: transform, opacity;
+  }
+
+  /* ---- Scroll track ---- */
+  .card_stack_contain {
+    position: relative;
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+  }
+
+  @media (max-width: 767px) {
+    .work-section {
+      padding-bottom: max(clamp(2.5rem, 12vw, 4rem), env(safe-area-inset-bottom, 0px));
+    }
+
+    .work-section__intro {
+      padding-top: clamp(3rem, 14vw, 5rem);
+      padding-bottom: clamp(1rem, 5vw, 1.5rem);
+    }
+  }
+
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .work-section {
+      padding-bottom: max(clamp(3rem, 8vh, 5rem), env(safe-area-inset-bottom, 0px));
+    }
+  }
+
+  /* ---- Pinned slides (ScrollTrigger on all viewports) ---- */
+  .slide {
+    position: relative;
+    z-index: var(--slide-index, 1);
+    height: 100svh;
+  }
+
+  /* ---- Card shell ---- */
+  .card_stack_layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+    align-content: center; /* center the row within the full-height card */
+    height: 100%;
+    padding-top: 3rem;
+    padding-bottom: var(--site-margin);
+    padding-inline: clamp(1.5rem, 4vw, 3rem);
+    background: var(--color-light-black);
+    border: 1px solid rgb(255 255 255 / 0.08);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 -1.5rem 3rem rgb(0 0 0 / 0.45);
+    transform-style: preserve-3d;
+    will-change: transform;
+    contain: layout;
+  }
+
+  /* ---- Text wrapper (GSAP SplitText target) ---- */
+  .card_stack_content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem; /* 24px per spec */
+    max-width: 42rem;
+  }
+
+  .card_stack_cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.5rem;
+    background: var(--color-accent);
+    color: var(--color-white);
+    border-radius: 9999px;
+    font-family: var(--font-heading);
+    font-size: 0.875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition:
+      transform 0.3s ease,
+      background-color 0.3s ease;
+    will-change: transform;
+  }
+
+  .card_stack_cta:hover {
+    transform: translateY(-2px);
+    background-color: var(--color-red);
+  }
+
+  .card_stack_cta svg {
+    width: 1.1em;
+    height: 1.1em;
+  }
+
+  .card_stack_index {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    letter-spacing: 0.3em;
+    color: var(--color-red);
+  }
+
+  .card_stack_title {
+    margin: 0;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    letter-spacing: 0.02em;
+  }
+
+  .card_stack_text {
+    margin: 0;
+    max-width: 40rem;
+    font-size: clamp(1rem, 2.4vw, 1.25rem);
+    line-height: 1.6;
+    color: rgb(255 255 255 / 0.72);
+  }
+
+  .card_stack_content :global(.work-split-line) {
+    overflow: hidden;
+  }
+
+  /* ---- Image (GSAP scale target) ---- */
+  .card_stack_img_wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 1rem;
+    overflow: hidden;
+    contain: layout paint;
+  }
+
+  .card_stack_img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    will-change: transform, opacity;
+  }
+
+  /* Mobile + tablet layout overrides */
+  @media (max-width: 991px) {
+    .work-section {
+      padding-inline: 0;
+    }
+
+    .work-section__intro {
+      padding-inline: var(--site-margin);
+    }
+
+    .card_stack_contain {
+      width: 100%;
+      max-width: none;
+      margin-inline: 0;
+    }
+
+    .slide {
+      width: 100%;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .card_stack_layout {
+      box-sizing: border-box;
+      width: 100%;
+      grid-template-columns: 1fr;
+      gap: clamp(1rem, 3vw, 1.5rem);
+      height: 100%;
+      align-content: center;
+      padding: 0;
+      border-radius: 0;
+      border-inline: none;
+      box-shadow: 0 -1rem 2rem rgb(0 0 0 / 0.35);
+    }
+
+    .card_stack_content {
+      gap: clamp(0.75rem, 2.5vw, 1.25rem);
+      width: 100%;
+      max-width: none;
+      padding-inline: clamp(1rem, 4vw, 1.5rem);
+      padding-bottom: clamp(1.25rem, 4vw, 1.75rem);
+      box-sizing: border-box;
+    }
+
+    .card_stack_title {
+      font-size: clamp(1.75rem, 7vw, 2.5rem);
+    }
+
+    .card_stack_text {
+      max-width: none;
+      font-size: clamp(0.95rem, 2.8vw, 1.125rem);
+    }
+
+    .card_stack_cta {
+      width: 100%;
+      justify-content: center;
+      padding: 0.85rem 1.25rem;
+      box-sizing: border-box;
+    }
+
+    .card_stack_img_wrap {
+      order: -1;
+      width: 100%;
+      overflow: hidden;
+      aspect-ratio: 16 / 10;
+      min-height: clamp(10rem, 32vw, 14rem);
+      max-height: min(44svh, 18rem);
+      border-radius: 0;
+    }
+  }
+
+  /* JS-off fallback: keep everything visible/usable */
+  :global(html:not(.gsap-work-ready)) .card_stack_content,
+  :global(html:not(.gsap-work-ready)) .card_stack_img {
+    opacity: 1;
+  }
+</style>

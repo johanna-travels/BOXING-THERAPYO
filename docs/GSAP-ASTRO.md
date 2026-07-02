@@ -24,7 +24,7 @@ Browser loads HTML
        ▼
 ┌──────────────────────────────────────────────────────────────┐
 │  Layer 3 — LandingPage.astro (inside #smooth-content)        │
-│  init-landing.ts → hero ScrollTrigger + section scroll reveal │
+│  init-landing.ts → hero bg, card stack, scroll reveal, work cards │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -42,8 +42,9 @@ Browser loads HTML
   <main id="smooth-wrapper">          ← ScrollSmoother wrapper
     <div id="smooth-content">         ← ScrollSmoother content (transform applied here)
       <LandingPage>                   ← Layer 3 — homepage sections
-        HeroImg
+        HeroSection               ← Layer 0 video + card-stack content
         ServicesSection
+        WorkSection
         LandingSection × n
       </LandingPage>
     </div>
@@ -64,7 +65,7 @@ Browser loads HTML
 | Change header on scroll | `src/scripts/gsap/header-transition.ts` |
 | Change nav menu animation | `src/scripts/gsap/nav-menu.ts` |
 | Add / reorder homepage sections | `src/components/landing/LandingPage.astro` |
-| Change hero image | `src/components/landing/HeroImg.astro` + `src/data/hero.ts` |
+| Change hero (video, copy) | `HeroSection.astro` + `LoaderContain.astro` + `src/data/hero.ts` + `hero-background.ts` |
 | Change services block (do not break parallax hooks) | `src/components/landing/ServicesSection.astro` |
 | Change section fade-in on scroll | `src/scripts/gsap/scroll-reveal.ts` |
 | Debug "when does GSAP run?" | `init-layout.ts` (global) · `init-landing.ts` (homepage) |
@@ -90,8 +91,11 @@ initNavMenu();          // open/close menu
 **Called from:** `src/components/landing/LandingPage.astro`
 
 ```ts
-initHeroImg();        // header mode when hero scrolls away
+initHeroBackground(); // Layer 0 poster/video
+initHeroScroll();     // header dark mode when hero scrolls away
+initHeroScroll();     // header dark mode when hero scrolls away
 initScrollReveal();   // [data-reveal] sections fade in
+initWorkCards();      // work section card stack
 ```
 
 Layer 2 is separate: `IntroLoader.astro` calls `bindIntroLoader()` on `window.load`.
@@ -221,8 +225,10 @@ src/
     IntroLoader.astro           ← Layer 2 intro
     landing/                    ← homepage sections (Layer 3 markup)
       LandingPage.astro         ← composes sections + initLandingPage()
-      HeroImg.astro
+      HeroSection.astro
+      HeroBackground.astro
       ServicesSection.astro
+      WorkSection.astro
       LandingSection.astro
   scripts/
     gsap/
@@ -234,6 +240,7 @@ src/
       nav-menu.ts
       scroll-reveal.ts
       hero.ts
+      work-cards.ts
   data/                         ← copy / config (no GSAP)
 ```
 

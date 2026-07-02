@@ -32,6 +32,7 @@ function getElements() {
   };
 }
 
+/** Webflow-style open state — drives CSS icon morph + GSAP menu timeline. */
 function setOpenState(open: boolean, elements: NonNullable<ReturnType<typeof getElements>>) {
   isOpen = open;
   elements.toggle.checked = open;
@@ -39,6 +40,8 @@ function setOpenState(open: boolean, elements: NonNullable<ReturnType<typeof get
   elements.toggle.setAttribute('aria-checked', open ? 'true' : 'false');
   elements.toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
   document.body.classList.toggle('nav-open', open);
+  document.body.classList.toggle('w--open', open);
+  elements.menu.classList.toggle('w--open', open);
   refreshHeaderVisibility();
 }
 
@@ -87,7 +90,7 @@ export function closeNavMenu(): Promise<void> {
         stagger: 0.04,
         ease: 'power2.in',
       },
-      0,
+      0.05,
     );
 
     activeTimeline.to(
@@ -122,11 +125,15 @@ function openNavMenu() {
     },
   });
 
-  activeTimeline.to(panel, {
-    yPercent: 0,
-    duration: 0.55,
-    ease: 'power3.out',
-  });
+  activeTimeline.to(
+    panel,
+    {
+      yPercent: 0,
+      duration: 0.55,
+      ease: 'power3.out',
+    },
+    0,
+  );
 
   activeTimeline.to(
     items,
@@ -154,9 +161,10 @@ function openNavMenu() {
 
 export function initNavMenu(): void {
   const elements = getElements();
-  if (!elements) return;
-
-  gsap.set(elements.panel, { yPercent: -100 });
+  if (!elements) {
+    console.error('[initNavMenu] Missing nav elements — check Layout.astro markup');
+    return;
+  }
 
   elements.toggle.addEventListener('change', () => {
     if (elements.toggle.checked) {

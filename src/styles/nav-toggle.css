@@ -1,0 +1,129 @@
+/* Navigation toggle — global styles (avoids Astro scope / :checked conflicts) */
+
+.nav-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+
+/* Keep the hamburger hidden until the intro loader is dismissed.
+   Must live here (unlayered) so it beats the unlayered .nav-toggle rule
+   above — a layered copy would lose to it regardless of specificity.
+   opacity on the wrapper hides the whole subtree, so the child
+   .nav_1_btn_wrap can't re-assert visibility. The loader element is
+   removed from the DOM when it finishes, so this stops matching and
+   the nav fades in — covers every dismissal path. */
+body:has([data-intro-loader]) .nav-toggle {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.nav-toggle .toggle-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.nav_1_btn_wrap {
+  position: relative;
+  z-index: 2;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 48px;
+  height: 48px;
+  margin: 0;
+  cursor: pointer;
+  visibility: var(--visible);
+  /* Pink default — stays visible on light hero skies / white backgrounds */
+  background-color: #df0567;
+  border: 1px solid #df0567;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 0.12),
+    0 2px 12px rgb(0 0 0 / 0.28);
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.nav_1_btn_icon {
+  position: relative;
+  width: 20px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.nav-line {
+  position: absolute;
+  left: 0;
+  display: block;
+  width: 20px;
+  height: 2px;
+  background-color: #ffffff;
+  border-radius: 1px;
+  transform-origin: center;
+  transition:
+    top 0.3s ease,
+    transform 0.3s ease,
+    background-color 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.nav-line-1 {
+  top: 0;
+}
+
+.nav-line-2 {
+  top: 7px;
+}
+
+.nav-line-3 {
+  top: 14px;
+}
+
+/* Open — white circle, pink X */
+#nav-toggle-input:checked + .nav_1_btn_wrap,
+body.w--open .nav_1_btn_wrap {
+  background-color: #ffffff;
+  border-color: #df0567;
+}
+
+#nav-toggle-input:checked + .nav_1_btn_wrap .nav-line-1,
+body.w--open .nav_1_btn_wrap .nav-line-1 {
+  top: 7px;
+  transform: rotate(45deg);
+  background-color: #df0567;
+}
+
+#nav-toggle-input:checked + .nav_1_btn_wrap .nav-line-2,
+body.w--open .nav_1_btn_wrap .nav-line-2 {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+#nav-toggle-input:checked + .nav_1_btn_wrap .nav-line-3,
+body.w--open .nav_1_btn_wrap .nav-line-3 {
+  top: 7px;
+  transform: rotate(-45deg);
+  background-color: #df0567;
+}
+
+#nav-toggle-input:focus-visible + .nav_1_btn_wrap {
+  outline: 2px solid #df0567;
+  outline-offset: 3px;
+}

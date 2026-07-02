@@ -1,0 +1,114 @@
+---
+/**
+ * Layer 0 — independent background entity (.loader_video_wrap).
+ * Poster paints first; video hydrates deferred (hero-background.ts).
+ * On failure / reduced motion → stays on poster (BG-IMG fallback).
+ */
+import { heroBackground } from '@/data/hero';
+
+const base = import.meta.env.BASE_URL;
+const asset = (path: string) =>
+  /^https?:\/\//.test(path)
+    ? path
+    : `${base.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
+
+const { poster, video } = heroBackground;
+const posterSrc = asset(poster.src);
+const localVideoSrc = asset(video.localSrc);
+const remoteVideoSrc = asset(video.remoteSrc);
+---
+
+<div
+  class="loader_video_wrap u-cover-absolute"
+  data-hero-background
+  data-testid="hero-background"
+>
+  <img
+    class="loader_video_poster"
+    src={posterSrc}
+    alt={poster.alt}
+    width="1600"
+    height="900"
+    loading="eager"
+    fetchpriority="high"
+    decoding="async"
+    data-hero-poster
+    data-testid="hero-image"
+  />
+
+  <div
+    class="loader_video_overlay"
+    aria-hidden="true"
+    data-testid="hero-video-overlay"
+  >
+  </div>
+
+  <video
+    id="hero_video"
+    class="loader_video"
+    muted
+    loop
+    playsinline
+    preload="none"
+    data-hero-video-el
+    data-local-src={localVideoSrc}
+    data-remote-src={remoteVideoSrc}
+    data-testid="hero-video"
+  >
+  </video>
+</div>
+
+<style>
+  .loader_video_wrap {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .u-cover-absolute {
+    width: 100%;
+    height: 100%;
+  }
+
+  .loader_video_poster,
+  .loader_video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .loader_video_poster {
+    z-index: 1;
+  }
+
+  .loader_video_overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: rgb(0 0 0 / 0.45);
+    pointer-events: none;
+  }
+
+  .loader_video {
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+
+  :global(.section_loader.is-video-ready) .loader_video {
+    opacity: 1;
+  }
+
+  :global(.section_loader.is-video-ready) .loader_video_poster {
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+
+  :global(.section_loader.is-fallback) .loader_video {
+    display: none;
+  }
+</style>

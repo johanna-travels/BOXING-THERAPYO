@@ -18,7 +18,7 @@ function onHeroReentered(): void {
   evaluateHeaderMode();
 }
 
-export function initHeroImg(): void {
+export function initHeroScroll(): void {
   const hero = document.querySelector<HTMLElement>(HERO_SELECTOR);
   if (!hero) return;
 

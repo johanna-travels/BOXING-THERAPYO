@@ -1,0 +1,193 @@
+---
+/**
+ * Intro loader container — static structure only.
+ * Animation/intro wiring intentionally left out (waiting for intro spec).
+ */
+interface Props {
+  title?: string;
+  subtitle?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+}
+
+const {
+  title = "LET'S GO VIRAL",
+  subtitle = 'SOCIAL MEDIA & INFLUENCER AGENCY',
+  ctaLabel = 'REQUEST PROJECT',
+  ctaHref = '#',
+} = Astro.props;
+---
+
+<div class="loader_contain" data-loader-contain>
+  <!-- Top Block: Typography -->
+  <div class="loader_layout">
+    <h1 class="h1-display">{title}</h1>
+    <h2 class="h2-sub">{subtitle}</h2>
+  </div>
+
+  <!-- Bottom Block: Interaction -->
+  <div class="loader_navigation">
+    <a href={ctaHref} class="btn_round" data-loader-cta>
+      <span>{ctaLabel}</span>
+      <svg
+        class="icon-arrow"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+        <polyline points="12 5 19 12 12 19"></polyline>
+      </svg>
+    </a>
+  </div>
+</div>
+
+<style>
+  .loader_contain {
+    /* Layout */
+    display: block;
+    width: calc(100% - 50px); /* 25px margin each side */
+    max-width: 100%;
+    margin: 0 auto;
+    position: relative;
+    z-index: 100;
+
+    /* Vertical Spacing */
+    height: auto;
+    min-height: 240px;
+  }
+
+  .loader_layout {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* Hierarchy gap between H1 and H2 */
+    gap: 0.5rem;
+  }
+
+  .h1-display {
+    font-size: clamp(3.5rem, 10vw, 9.06rem); /* Fluid size: ~145px */
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    line-height: 0.9;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .h2-sub {
+    font-size: clamp(1.2rem, 2vw, 1.95rem); /* ~31px */
+    font-weight: 400;
+    margin: 0;
+  }
+
+  .loader_navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px; /* Το gap που χωρίζει τα δύο blocks */
+  }
+
+  .btn_round {
+    /* The Round Button Spec */
+    display: flex;
+    align-items: center;
+    padding: 0.95rem 1.5rem;
+    background-color: #ffffff;
+    color: #df0567; /* Το Red/Pink color */
+    border-radius: 100vw;
+    font-size: 20px;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+  }
+
+  .btn_round:hover {
+    transform: translateY(-2px);
+  }
+
+  .icon-arrow {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-left: 0.5rem;
+  }
+
+  /* Tablet Breakpoint */
+  @media screen and (max-width: 991px) {
+    .loader_contain {
+      width: calc(100% - 40px); /* Λίγο μικρότερο margin */
+      min-height: auto;
+    }
+
+    .h1-display {
+      /* Κατεβαίνουμε από τα 145px στα ~90px */
+      font-size: clamp(3rem, 12vw, 6rem);
+      line-height: 1; /* Δίνουμε λίγο "αέρα" στις γραμμές */
+    }
+
+    .h2-sub {
+      /* Από τα 31px στα ~24px */
+      font-size: 1.5rem;
+      max-width: 80%; /* Για να μην απλώνει πολύ το κείμενο */
+    }
+
+    .loader_navigation {
+      margin-top: 24px; /* Μειώνουμε το κενό από 32px σε 24px */
+      flex-direction: column; /* Αν έχουμε πολλά στοιχεία, τα στοιχίζουμε κάθετα */
+      align-items: flex-start;
+      gap: 16px;
+    }
+  }
+
+  /* Small Tablet / Large Mobile (768px) */
+  @media screen and (max-width: 768px) {
+    .h1-display {
+      font-size: 4rem; /* Σταθερό μέγεθος για μικρά tablets */
+    }
+
+    .btn_round {
+      width: 100%; /* Το κουμπί πιάνει όλο το πλάτος για ευκολία στο πάτημα */
+      justify-content: center;
+    }
+  }
+
+  /* Mobile Breakpoint */
+  @media screen and (max-width: 479px) {
+    .loader_contain {
+      width: calc(100% - 32px); /* 16px margin δεξιά-αριστερά */
+      min-height: auto;
+      /* Φέρνουμε το περιεχόμενο λίγο πιο κάτω από το κέντρο */
+      padding-bottom: 2rem;
+    }
+
+    .h1-display {
+      /* Από τα 145px, κατεβαίνουμε στα ~48px έως 56px */
+      font-size: clamp(2.5rem, 15vw, 3.5rem);
+      line-height: 1.1; /* Απαραίτητο για να μην κολλάνε οι λέξεις */
+      letter-spacing: -0.02em; /* Πιο "σφιχτό" look */
+    }
+
+    .h2-sub {
+      /* Από τα 31px στα 18px */
+      font-size: 1.125rem;
+      line-height: 1.3;
+      max-width: 100%;
+      margin-top: 8px;
+    }
+
+    .loader_navigation {
+      margin-top: 40px; /* Μεγαλύτερο κενό για να ξεχωρίζει το κουμπί */
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .btn_round {
+      width: 100%; /* Full width button για εύκολο πάτημα (Thumb-friendly) */
+      padding: 1.2rem; /* Λίγο πιο "παχύ" κουμπί */
+      justify-content: center;
+      font-size: 18px;
+    }
+  }
+</style>

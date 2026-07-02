@@ -1,0 +1,106 @@
+---
+/**
+ * FocusBox wordmark — plain text (no SVG).
+ * Letter spans keep [data-logo-part] targets for GSAP stagger + loader hand-off.
+ */
+interface Props {
+  class?: string;
+  variant?: 'loader' | 'header';
+  showTagline?: boolean;
+}
+
+const { class: className = '', variant = 'header', showTagline = false } = Astro.props;
+
+const mainLetters = ['F', 'O', 'C', 'U', 'S', 'B', 'O', 'X'] as const;
+const taglineLetters = ['B', 'O', 'X', 'I', 'N', 'G', ' ', 'T', 'H', 'E', 'R', 'A', 'P', 'Y'] as const;
+---
+
+<span
+  class:list={['logo-wordmark', `logo-wordmark--${variant}`, className]}
+  data-logo-text
+  aria-label="FocusBox Boxing Therapy"
+  role="img"
+>
+  {
+    mainLetters.map((letter, i) => (
+      <span class="logo-char" data-logo-part={`main-${letter.toLowerCase()}-${i}`}>
+        {letter}
+      </span>
+    ))
+  }
+
+  {
+    showTagline && (
+      <span class="logo-tagline">
+        <span class="logo-rule" data-logo-part="rule" aria-hidden="true" />
+        {
+          taglineLetters.map((letter, i) =>
+            letter === ' ' ? (
+              <span class="logo-char logo-char--space" aria-hidden="true">
+                {' '}
+              </span>
+            ) : (
+              <span class="logo-char" data-logo-part={`tag-${letter.toLowerCase()}-${i}`}>
+                {letter}
+              </span>
+            ),
+          )
+        }
+      </span>
+    )
+  }
+</span>
+
+<style>
+  .logo-wordmark {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--color-white);
+    white-space: nowrap;
+  }
+
+  .logo-wordmark--header {
+    flex-direction: row;
+    gap: 0;
+    font-size: var(--logo-font-size);
+  }
+
+  .logo-wordmark--loader {
+    font-size: clamp(2rem, 8vw, 3.25rem);
+  }
+
+  .logo-char {
+    display: inline-block;
+    transform-origin: center bottom;
+  }
+
+  .logo-char--space {
+    width: 0.35em;
+  }
+
+  .logo-tagline {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.12em;
+    font-size: 0.28em;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .logo-rule {
+    display: block;
+    width: 100%;
+    height: 1.5px;
+    margin-bottom: 0.35em;
+    background: currentColor;
+    transform-origin: left center;
+  }
+</style>

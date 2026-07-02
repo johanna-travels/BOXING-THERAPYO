@@ -2,7 +2,13 @@
 import { ctaNav, primaryNav, socialNav } from '@/data/nav';
 ---
 
-<div class="nav-menu" id="site-nav-menu" data-nav-menu data-testid="nav-menu" aria-hidden="true">
+<div
+  class="nav-menu nav nav_1_menu_wrap"
+  id="site-nav-menu"
+  data-nav-menu
+  data-testid="nav-menu"
+  aria-hidden="true"
+>
   <div class="nav-menu__panel" data-nav-panel data-testid="nav-menu-panel">
     <nav class="nav-menu__primary" aria-label="Primary">
       <ul class="menu nav">
@@ -35,7 +41,6 @@ import { ctaNav, primaryNav, socialNav } from '@/data/nav';
               class="nav-menu__social-link"
               target="_blank"
               rel="noopener noreferrer"
-              data-barba-prevent
               data-testid={`nav-social-${item.label.toLowerCase()}`}
             >
               {item.label}
@@ -61,11 +66,42 @@ import { ctaNav, primaryNav, socialNav } from '@/data/nav';
     display: flex;
     height: 100%;
     flex-direction: column;
-    padding: calc(var(--header-height) + var(--space-grid)) var(--header-px) var(--space-2);
+    padding: calc(var(--header-height) + var(--space-grid)) var(--site-margin) var(--space-2);
+    transform: translateY(-100%);
+  }
+
+  /* CSS fallback — menu opens from checkbox even if GSAP fails */
+  body:has(#nav-toggle-input:checked) .nav-menu,
+  .nav-menu.w--open {
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  body:has(#nav-toggle-input:checked) .nav-menu__panel,
+  .nav-menu.w--open .nav-menu__panel {
+    transform: translateY(0);
+  }
+
+  body:has(#nav-toggle-input:checked) .nav-menu [data-nav-item],
+  body:has(#nav-toggle-input:checked) [data-nav-secondary],
+  .nav-menu.w--open [data-nav-item],
+  .nav-menu.w--open [data-nav-secondary] {
+    opacity: 1;
   }
 
   .nav-menu__primary {
     flex: 1;
+  }
+
+  .nav_1_menu_wrap .nav-menu__primary {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav_1_menu_wrap .menu.nav {
+    text-align: center;
   }
 
   .menu.nav {
@@ -80,12 +116,12 @@ import { ctaNav, primaryNav, socialNav } from '@/data/nav';
 
   .menu__link {
     display: inline-block;
-    font-family: var(--font-heading);
-    font-size: clamp(2rem, 7vw, 3.5rem);
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
+    font-family: var(--font-body);
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0;
+    text-transform: none;
     text-decoration: none;
     color: var(--color-white);
     transition: opacity 0.2s ease;
@@ -106,10 +142,12 @@ import { ctaNav, primaryNav, socialNav } from '@/data/nav';
   }
 
   .nav-menu__cta {
-    font-family: var(--font-heading);
-    font-size: var(--text-title-lg);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    font-family: var(--font-body);
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0;
+    text-transform: none;
     text-decoration: none;
     color: var(--color-white);
   }
@@ -123,16 +161,20 @@ import { ctaNav, primaryNav, socialNav } from '@/data/nav';
 
   .nav-menu__follow {
     font-family: var(--font-body);
-    font-size: 0.875rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0;
+    text-transform: none;
     opacity: 0.7;
   }
 
   .nav-menu__social-link {
-    font-family: var(--font-heading);
-    font-size: 0.875rem;
-    letter-spacing: 0.14em;
+    font-family: var(--font-body);
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0;
     text-decoration: none;
     color: var(--color-white);
     opacity: 0.85;

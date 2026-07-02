@@ -34,7 +34,10 @@ src/
     IntroLoader.astro            ← intro overlay (Layer 2)
     landing/                     ← homepage sections (Layer 3)
       LandingPage.astro
-      HeroImg.astro
+      HeroSection.astro          ← hero shell (background + LoaderContain)
+      HeroBackground.astro
+      LoaderContain.astro
+      WorkSection.astro
       ServicesSection.astro
       LandingSection.astro
   scripts/gsap/
@@ -42,7 +45,8 @@ src/
     init-landing.ts              ← Layer 3 entry
     scroll-smoother.ts
     intro-loader.ts
-    hero.ts
+    hero.ts                      ← header scroll hook when leaving hero
+    hero-background.ts           ← Layer 0 video/poster (src/scripts/)
     scroll-reveal.ts
     header-transition.ts
     nav-menu.ts

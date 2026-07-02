@@ -1,5 +1,6 @@
 ---
 import { introLoaderBg, introLoaderLines } from '@/data/intro-loader';
+import LogoWordmark from '@/components/LogoWordmark.astro';
 ---
 
 <div
@@ -9,6 +10,14 @@ import { introLoaderBg, introLoaderLines } from '@/data/intro-loader';
   style={`--intro-loader-bg: ${introLoaderBg}`}
   aria-live="polite"
 >
+  <div
+    class="nav_fake_logo_wrap is-op-0"
+    data-fake-logo-wrap
+    data-testid="intro-fake-logo"
+  >
+    <LogoWordmark variant="loader" showTagline />
+  </div>
+
   <div
     class="intro-loader__progress"
     data-intro-loader-progress
@@ -54,13 +63,20 @@ import { introLoaderBg, introLoaderLines } from '@/data/intro-loader';
     user-select: none;
   }
 
+  .nav_fake_logo_wrap {
+    position: absolute;
+    top: max(1rem, env(safe-area-inset-top));
+    left: 3%;
+    z-index: 2;
+  }
+
   .intro-loader__progress {
     position: absolute;
     top: 0;
     right: 0;
     width: 0.5rem;
     height: 100%;
-    background: var(--color-black);
+    background: var(--color-white);
     transform-origin: top;
   }
 
@@ -79,6 +95,7 @@ import { introLoaderBg, introLoaderLines } from '@/data/intro-loader';
     line-height: 0.9;
     letter-spacing: -0.05em;
     text-transform: uppercase;
+    color: #df0567;
   }
 
   @media (min-width: 768px) {

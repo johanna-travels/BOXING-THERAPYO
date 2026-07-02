@@ -1,0 +1,36 @@
+---
+/**
+ * Hero section — .section_loader parent with two sibling layers:
+ *   Layer 0: HeroBackground (.loader_video_wrap)
+ *   Layer 2: LoaderContain (.loader_contain) — centered over the video
+ *
+ * Preserves #hero, [data-hero-img], data-testid hooks for header + tests.
+ */
+import HeroBackground from '@/components/landing/HeroBackground.astro';
+import LoaderContain from '@/components/LoaderContain.astro';
+---
+
+<section
+  id="hero"
+  class="section_loader"
+  data-hero-img
+  data-testid="hero-section"
+>
+  <HeroBackground />
+  <LoaderContain />
+</section>
+
+<style>
+  .section_loader {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: 100dvh;
+    max-height: 100dvh;
+    padding-bottom: clamp(2rem, 6vh, 4rem);
+    overflow: hidden;
+    isolation: isolate;
+    scroll-margin-top: var(--header-height);
+    background: var(--color-white);
+  }
+</style>

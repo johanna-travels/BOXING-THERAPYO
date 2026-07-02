@@ -7,7 +7,12 @@ import { initNavMenu } from '@/scripts/gsap/nav-menu';
 import { initScrollSmoother } from '@/scripts/gsap/scroll-smoother';
 
 export function initLayout(): void {
-  initScrollSmoother();
+  try {
+    initScrollSmoother();
+  } catch (error) {
+    console.error('[initLayout] ScrollSmoother failed — nav/header still init', error);
+  }
+
   initHeaderTransition();
   initNavMenu();
 }

@@ -1,9 +1,11 @@
 @import "tailwindcss";
 @import "./fonts.css";
+@import "./nav-toggle.css";
 
 @theme inline {
   --font-heading: 'Oswald', system-ui, sans-serif;
-  --font-body: 'Bebas Neue', system-ui, sans-serif;
+  --font-body: 'Inter Variable', Inter, Arial, sans-serif;
+  --color-accent: #df0567;
 
   --color-black: #000000;
   --color-light-black: #141414;
@@ -13,28 +15,58 @@
 }
 
 :root {
-  --z-nav: 998;
-  --z-header: 999;
+  --visible: visible;
+  --z-nav: 10002;
+  --z-header: 10003;
   --z-intro-loader: 10000;
   --z-transition: 20;
-  --header-height: calc(max(var(--header-pt), env(safe-area-inset-top)) + var(--touch-target) + var(--header-pb));
+  --site-margin: clamp(1rem, 4vw, 1.5625rem); /* ~25px — shared with hero/work sections */
+  --site--margin: var(--site-margin); /* Webflow alias */
+  --header-bar-height: 56px;
+  --header-contain-pt: 1.5rem; /* 24px — mobile */
+  --header-contain-px: 12px;
+  --header-contain-pb: 16px;
+  --logo-font-size: var(--text-headline-sm); /* 24px — mobile */
+  --header-height: calc(
+    env(safe-area-inset-top, 0px) + var(--header-contain-pt) + var(--header-bar-height) +
+      var(--header-contain-pb)
+  );
 
-  /* Google / Material baseline (16px root, 8px grid) */
-  --font-size-base: 16px;
-  --line-height-base: 1.5;
+  /* Type baseline — Inter 20/24 */
+  --font-size-base: 20px;
+  --line-height-base: 24px;
   --space-grid: 8px;
   --space-2: 16px;
   --icon-size: 24px;
   --touch-target: 48px;
-  --header-pt: 10px;
-  --header-px: 16px;
-  --header-pb: 8px;
 
   /* Material type scale */
   --text-title-lg: 1.375rem; /* 22px */
   --text-headline-sm: 1.5rem; /* 24px */
   --text-headline-md: 1.75rem; /* 28px */
   --text-headline-lg: 2rem; /* 32px */
+}
+
+/* Site header contain — tablet */
+@media (min-width: 768px) {
+  :root {
+    --header-bar-height: 64px;
+    --header-contain-pt: 1.75rem; /* 28px */
+    --header-contain-px: 14px;
+    --header-contain-pb: 20px;
+    --logo-font-size: var(--text-headline-md); /* 28px */
+  }
+}
+
+/* Site header contain — desktop */
+@media (min-width: 1024px) {
+  :root {
+    --header-bar-height: 72px;
+    --header-contain-pt: 2rem; /* 32px */
+    --header-contain-px: 16px;
+    --header-contain-pb: 24px;
+    --logo-font-size: var(--text-headline-lg); /* 32px */
+  }
 }
 
 @layer base {
@@ -58,9 +90,10 @@
 
   body {
     font-family: var(--font-body);
-    font-size: 1rem;
+    font-size: var(--font-size-base);
+    font-weight: 400;
     line-height: var(--line-height-base);
-    letter-spacing: 0.04em;
+    letter-spacing: 0;
     background: var(--color-black);
     color: var(--color-white);
   }
@@ -88,12 +121,29 @@
   }
 
   p {
-    font-size: 1rem;
+    font-size: var(--font-size-base);
+    font-weight: 400;
     line-height: var(--line-height-base);
   }
 
   body.nav-open {
     overflow: hidden;
+  }
+
+  body.w--open {
+    overflow: hidden;
+  }
+
+  /* GSAP logo — prevent flash before stagger reveal */
+  .is-op-0 {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .site-header,
+  .site-header .nav-toggle,
+  .site-header .nav_1_btn_wrap {
+    visibility: var(--visible);
   }
 
   body.nav-open .site-header {
@@ -105,19 +155,15 @@
   }
 
   body.is-playing .site-header {
-    /* transparent + compact — GSAP drives values; fallback for no-JS */
+    /* transparent — GSAP drives background; fallback for no-JS */
     background: transparent;
-  }
-
-  body.is-header-active .site-header {
-    padding-top: max(6px, env(safe-area-inset-top));
-    padding-bottom: 4px;
   }
 
   #smooth-wrapper {
     overflow: hidden;
     position: fixed;
     inset: 0;
+    z-index: 1;
     width: 100%;
     height: 100%;
   }
